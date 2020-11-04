@@ -316,3 +316,54 @@ MainWindow::~MainWindow()
 }
 
 
+MyMesh::Point milieu(MyMesh::Point A, MyMesh::Point B)
+{
+    MyMesh::Point I;
+    I[0] = (A[0] + B[0])/2;
+    I[1] = (A[1] + B[1])/2;
+    I[2] = (A[2] + B[2])/2;
+    return I;
+}
+
+QVector3D vecteur(MyMesh::Point A, MyMesh::Point B)
+{
+    QVector3D AB;
+    AB[0] = B[0]-A[0];
+    AB[1] = B[1]-A[1];
+    AB[2] = B[2]-A[2];
+    return AB;
+}
+
+
+QVector4D planMediateur(MyMesh::Point A, MyMesh::Point B) // ax+by+cz+d
+{
+    MyMesh::Point I;
+    QVector3D AB;
+    QVector4D P;
+    I = milieu(A,B);
+    AB = vecteur(A,B);
+    P[0] = AB[0]; //a
+    P[1] = AB[1]; //b
+    P[2] = AB[2]; //c
+    P[3] = -(AB[0]*I[0] + AB[1]*I[1] + AB[2]*I[2]);// d
+    return P;
+}
+
+
+bool isIntersect(QVector4D P, QVector4D Q)
+{
+    if(P[0]/Q[0] == P[1]/Q[1] && P[0]/Q[0] == P[2]/Q[2])
+    {
+        return False;
+    }
+    return True;
+}
+
+
+
+
+
+
+
+
+

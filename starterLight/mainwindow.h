@@ -5,6 +5,8 @@
 #include <QMainWindow>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+#include <QVector3D>
+#include <QVector4D>
 
 namespace Ui {
 class MainWindow;
@@ -40,6 +42,11 @@ public:
 
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
     void resetAllColorsAndThickness(MyMesh* _mesh);
+
+    QVector4D planMediateur(MyMesh::Point A, MyMesh::Point B);
+    MyMesh::Point milieu(MyMesh::Point A, MyMesh::Point B);
+    QVector3D vecteur(MyMesh::Point A, MyMesh::Point B);
+    bool isIntersect(QVector4D P, QVector4D Q);
 
 private slots:
     void on_pushButton_chargement_clicked();
