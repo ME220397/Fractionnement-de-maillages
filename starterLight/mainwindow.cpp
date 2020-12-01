@@ -359,11 +359,80 @@ bool isIntersect(QVector4D P, QVector4D Q)
     return True;
 }
 
+QVector3D MainWindow::recup_intersect(QVector4D P, QVector4D Q)//P=ax+by+cz+d et Q=a'x+b'y+c'z+d'
+{
+    MyMesh::Point p1;
+    MyMesh::Point p2;
+    /*if(Q[0]==0 || Q[1]==0 || Q[2]==0)
+    {
+        QVector4D Mem = P;
+        P=Q;
+        Q=Mem;
+    }*/
 
 
 
+    if(P[0] == 0)
+    {
+        p1[2] = 1; //z = 1
+        p1[1] = -(P[2]+P[3])/P[1];//y= -(c+d)/b
+        p1[0] = -(Q[1]*((P[2] + P[3])/P[1])+Q[2]+ Q[3]) / Q[0]; //x = -(b'((c+d)/b)+c'+d')/a'
+
+        p2[2] = 0;//z = 0
+        p2[1] = -P[3]/P[1];
+        p2[0] = -(Q[1]*(P[3]/P[1])- Q[3]) / Q[0];
+    }
+    else if(P[1] == 0)
+    {
+        p1[2] = 1;//z = 1
+        p1[0] = -(P[2]+P[3])/P[0];//x=-(c+d)/a
+        p1[1] = -(Q[0]*((P[2] + P[3])/P[0])+Q[2]+ Q[3]) / Q[1]; //y = -(a'((c+d)/a)+c'+d')/b'
+
+        p2[2] = 0;//z = 0
+        p2[0] = -P[3]/P[0];
+        p2[1] = -(Q[0]*(P[3]/P[0])- Q[3]) / Q[1];
+    }
+    else if(P[2] == 0)
+    {
+        p1[0] = 1;//z = 1
+        p1[1] = -(P[0]+P[3])/P[1];//y= -(a+d)/b
+        p1[2] = -(Q[1]*((P[0] + P[3])/P[1])+Q[0]+ Q[3]) / Q[2]; //x = -(b'((a+d)/b)+a'+d')/c'
+
+        p2[0] = 0;//z = 0
+        p2[1] = -P[3]/P[1];
+        p2[2] = -(Q[1]*(P[3]/P[1])- Q[3]) / Q[2];
+    }
+    else
+    {
+        p1[2] = 1;//z=1
+        p1[1] = -((P[2]*Q[0] - Q[2]*P[0]) + (P[4]*Q[0] - Q[4]*P[0]))/(P[1]*Q[0] - Q[1]*P[0]);//y = -(z(ca'-c'a) + (da'-d'a))/(ba'-b'a)
+        p1[0] = -(P[1]*p1[1] + P[2]*p1[2] + P[3])/P[0];//x = -(by+cz+d)/a
+
+        p2[2] = 0;
+        p2[1] = -(P[3]*Q[0] - Q[3]*P[0])/(P[1]*Q[0] - Q[1]*P[0]);
+        p2[0] = -(P[1]*p2[1] + P[2]*p2[2] + P[3])/P[0];//x = -(by+cz+d)/a
+    }
+    QVector3D eq = eq_droite(p1,p2);
+    return eq;
+}
 
 
+float MainWindow::pente(MyMesh::Point p1, MyMesh::Point p2)
+{
+    float a = (p2[1] - p1[1])/(p2[0]-p1[0]);
+    return a;
+}
+
+QVector3D MainWindow::eq_droite(MyMesh::Point p1, MyMesh::Point p2)//y=ax+b <=> ax -y + b = 0
+{
+    float a = pente(p1,p2);
+    float b = p1[1] - a*p1[0];
+    QVector3D eq;
+    eq[0] = a;
+    eq[1] = -1;
+    eq[2] = b;
+    return eq;
+}
 
 
 

@@ -47,6 +47,10 @@ public:
     MyMesh::Point milieu(MyMesh::Point A, MyMesh::Point B);
     QVector3D vecteur(MyMesh::Point A, MyMesh::Point B);
     bool isIntersect(QVector4D P, QVector4D Q);
+    QVector3D recup_intersect(QVector4D P, QVector4D Q);
+    float pente(MyMesh::Point p1, MyMesh::Point p2);
+    QVector3D eq_droite(MyMesh::Point p1, MyMesh::Point p2);
+
 
 private slots:
     void on_pushButton_chargement_clicked();
