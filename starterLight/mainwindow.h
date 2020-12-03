@@ -46,10 +46,14 @@ private slots:
 
     void on_pushButton_generer_clicked();
 
+    void on_pushButton_clicked();
+
+    void on_horizontalSlider_valueChanged(int value);
+
 private:
 
     MyMesh mesh;
-
+    MyMesh cloud;
     Ui::MainWindow *ui;
 };
 

@@ -148,7 +148,7 @@ void MeshViewerWidget::loadPoints(GLfloat* verts, GLfloat* colors, int nVerts, G
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, PointsDataBuffers[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, nPoints * sizeof(GLuint), points, GL_STATIC_DRAW);
 
-    pointsToDraw = nPoints;
+    pointsToDraw += nPoints;
 
     vertsSizes = vs;
 

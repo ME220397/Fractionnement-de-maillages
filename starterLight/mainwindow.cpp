@@ -3,7 +3,25 @@
 
 
 /* **** début de la partie boutons et IHM **** */
+MyMesh create_points(){
+    MyMesh nubes;
+    nubes.add_vertex(MyMesh::Point(-1, -1, 1));
+    nubes.add_vertex(MyMesh::Point(1, -1, 1));
+    nubes.add_vertex(MyMesh::Point(1, 1, 1));
+    nubes.add_vertex(MyMesh::Point(-1, 1, 1));
 
+    nubes.add_vertex(MyMesh::Point(-1, -1, -1));
+    nubes.add_vertex(MyMesh::Point(1, -1, -1));
+    nubes.add_vertex(MyMesh::Point(1, 1, -1));
+    nubes.add_vertex(MyMesh::Point(-1, 1, -1));
+
+    for(MyMesh::VertexIter v = nubes.vertices_begin(); v != nubes.vertices_end(); v++){
+        nubes.data(*v).thickness = 15;
+        nubes.set_color(*v, MyMesh::Color(0,0,255));
+    }
+
+    return nubes;
+}
 
 // exemple pour charger un fichier .obj
 void MainWindow::on_pushButton_chargement_clicked()
@@ -316,3 +334,18 @@ MainWindow::~MainWindow()
 }
 
 
+
+void MainWindow::on_pushButton_clicked()
+{
+    cloud = create_points();
+    displayMesh(&cloud);
+}
+
+void MainWindow::on_horizontalSlider_valueChanged(int value)
+{
+    MyMesh *pnt = &cloud;
+    for (MyMesh::VertexIter v_it = pnt->vertices_begin(); v_it != pnt->vertices_end(); v_it++) {
+        pnt->data(*v_it).thickness = value;
+    }
+    displayMesh(&cloud);
+}
