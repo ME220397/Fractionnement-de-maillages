@@ -335,7 +335,7 @@ QVector3D vecteur(MyMesh::Point A, MyMesh::Point B)
 }
 
 
-QVector4D planMediateur(MyMesh::Point A, MyMesh::Point B) // ax+by+cz+d
+QVector4D planMediateur(MyMesh::Point A, MyMesh::Point B) //ax+by+cz+d=0
 {
     MyMesh::Point I;
     QVector3D AB;
@@ -352,7 +352,7 @@ QVector4D planMediateur(MyMesh::Point A, MyMesh::Point B) // ax+by+cz+d
 
 bool isIntersect(QVector4D P, QVector4D Q)
 {
-    if(P[0]/Q[0] == P[1]/Q[1] && P[0]/Q[0] == P[2]/Q[2])
+    if(P[0]/Q[0] == P[1]/Q[1] && P[0]/Q[0] == P[2]/Q[2])//Condition si Q = 0
     {
         return False;
     }
@@ -423,8 +423,13 @@ float MainWindow::pente(MyMesh::Point p1, MyMesh::Point p2)
     return a;
 }
 
-QVector3D MainWindow::eq_droite(MyMesh::Point p1, MyMesh::Point p2)//y=ax+b <=> ax -y + b = 0
+
+
+
+QVector3D MainWindow::eq_droite(MyMesh::Point p1, MyMesh::Point p2)
 {
+    //QVector3D v = vecteur(p1, p2);
+
     float a = pente(p1,p2);
     float b = p1[1] - a*p1[0];
     QVector3D eq;
