@@ -32,11 +32,14 @@ macx: {
 }
 
 SOURCES += main.cpp\
+        mesh.cpp \
         princ.cpp \
         glarea.cpp
 
 HEADERS  += princ.h \
-        glarea.h
+        MeshFormat.h \
+        glarea.h \
+        mesh.h
 
 FORMS    += princ.ui
 
