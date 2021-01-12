@@ -1,8 +1,16 @@
 #include "mesh.h"
 
-Mesh::Mesh(MyMesh *_mesh)
+Mesh::Mesh(MyMesh mesh)
 {
-    this->mesh = *_mesh;
+    this->mesh = mesh;
+    resetAllColorsAndThickness(&this->mesh);
+}
+
+Mesh::Mesh(QVector<MyMesh::Point> points){
+    for(MyMesh::Point p : points){
+        this->mesh.add_vertex(p);
+    }
+    resetAllColorsAndThickness(&this->mesh);
 }
 
 // Fonctions pour changer la couleur
@@ -104,15 +112,15 @@ void Mesh::load_data(){
         c = _mesh->point(v3);
 
         // On les ajoute à notre liste de sommets
-        face_vertices[cpt] = a[0];face_vertices[cpt+1] = a[1];face_vertices[cpt+2] = a[2];
-        face_vertices[cpt+3] = b[0];face_vertices[cpt+4] = b[1];face_vertices[cpt+5] = b[2];
-        face_vertices[cpt+6] = c[0];face_vertices[cpt+7] = c[1];face_vertices[cpt+8] = c[2];
+        face_vertices[cpt] = float(a[0]);face_vertices[cpt+1] = float(a[1]);face_vertices[cpt+2] = float(a[2]);
+        face_vertices[cpt+3] = float(b[0]);face_vertices[cpt+4] = float(b[1]);face_vertices[cpt+5] = float(b[2]);
+        face_vertices[cpt+6] = float(c[0]);face_vertices[cpt+7] = float(c[1]);face_vertices[cpt+8] = float(c[2]);
 
         // On recupere les couleurs associé aux sommets
-        MyMesh::Color col_v1 = _mesh->color(v1);
-        MyMesh::Color col_v2 = _mesh->color(v2);
-        MyMesh::Color col_v3 = _mesh->color(v3);
-
+        MyMesh::Color col_v1 = _mesh->color(*f_it);
+        MyMesh::Color col_v2 = _mesh->color(*f_it);
+        MyMesh::Color col_v3 = _mesh->color(*f_it);
+        qDebug() << col_v1[0] << " " << col_v1[1] << " " << col_v1[2];
         face_color[cpt] = float(col_v1[0])/255.f;face_color[cpt+1] = float(col_v1[1])/255.f;face_color[cpt+2] = float(col_v1[2])/255.f;
         face_color[cpt+3] = float(col_v2[0])/255.f;face_color[cpt+4] = float(col_v2[1])/255.f;face_color[cpt+5] = float(col_v2[2])/255.f;
         face_color[cpt+6] = float(col_v3[0])/255.f;face_color[cpt+7] = float(col_v3[1])/255.f;face_color[cpt+8] = float(col_v3[2])/255.f;
@@ -133,7 +141,7 @@ void Mesh::load_data(){
     if(n_faces > 0){
         vbo_face.create();
         vbo_face.bind();
-        vbo_face.allocate(face_data_vertices.constData(), face_data_vertices.count() * sizeof(GLfloat));
+        vbo_face.allocate(face_data_vertices.constData(), face_data_vertices.count() * int(sizeof(GLfloat)));
     }
 
     // Chargement des arêtes
@@ -158,8 +166,8 @@ void Mesh::load_data(){
         edge_vertices[cpt+3] = b[0];edge_vertices[cpt+4] = b[1];edge_vertices[cpt+5] = b[2];
 
         // On récupère les couleurs
-        MyMesh::Color col_v1 = _mesh->color(v1);
-        MyMesh::Color col_v2 = _mesh->color(v2);
+        MyMesh::Color col_v1 = _mesh->color(*e_it);
+        MyMesh::Color col_v2 = _mesh->color(*e_it);
 
         edge_color[cpt] = float(col_v1[0])/255.f;edge_color[cpt+1] = float(col_v1[1])/255.f;edge_color[cpt+2] = float(col_v1[2])/255.f;
         edge_color[cpt+3] = float(col_v2[0])/255.f;edge_color[cpt+4] = float(col_v2[1])/255.f;edge_color[cpt+5] = float(col_v2[2])/255.f;
@@ -180,7 +188,7 @@ void Mesh::load_data(){
     if(n_edges > 0){
         vbo_line.create();
         vbo_line.bind();
-        vbo_line.allocate(edge_data_vert.constData(), edge_data_vert.count() * sizeof(GLfloat));
+        vbo_line.allocate(edge_data_vert.constData(), edge_data_vert.count() * int(sizeof(GLfloat)));
     }
     // Chargement des points
     GLfloat vertices[n_vertices*3];
@@ -209,7 +217,7 @@ void Mesh::load_data(){
     if(n_vertices > 0){
         vbo_point.create();
         vbo_point.bind();
-        vbo_point.allocate(vert_data.constData(), vert_data.count() * sizeof(GLfloat));
+        vbo_point.allocate(vert_data.constData(), vert_data.count() * int(sizeof(GLfloat)));
     }
 }
 
@@ -230,7 +238,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->enableAttributeArray("in_position");
         program->enableAttributeArray("col");
 
-        glDrawArrays(GL_LINES, 0, edge_to_draw);
+        glDrawArrays(GL_LINES, 0, edge_to_draw*2);
 
         program->disableAttributeArray("in_position");
         program->disableAttributeArray("col");
@@ -254,7 +262,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->enableAttributeArray("in_position");
         program->enableAttributeArray("col");
 
-        glDrawArrays(GL_TRIANGLES, 0, face_to_draw);
+        glDrawArrays(GL_TRIANGLES, 0, face_to_draw*3);
 
         program->disableAttributeArray("in_position");
         program->disableAttributeArray("col");
@@ -371,4 +379,30 @@ MyMesh Mesh::compute_bounding_box(){
     }
 
     return bbox;
+}
+
+void Mesh::destroy_vbos(){
+    vbo_face.destroy();
+    vbo_line.destroy();
+    vbo_point.destroy();
+}
+
+void Mesh::resetAllColorsAndThickness(MyMesh* _mesh)
+{
+    for (MyMesh::VertexIter curVert = _mesh->vertices_begin(); curVert != _mesh->vertices_end(); curVert++)
+    {
+        _mesh->data(*curVert).thickness = 1;
+        _mesh->set_color(*curVert, MyMesh::Color(0, 0, 0));
+    }
+
+    for (MyMesh::FaceIter curFace = _mesh->faces_begin(); curFace != _mesh->faces_end(); curFace++)
+    {
+        _mesh->set_color(*curFace, MyMesh::Color(150, 150, 150));
+    }
+
+    for (MyMesh::EdgeIter curEdge = _mesh->edges_begin(); curEdge != _mesh->edges_end(); curEdge++)
+    {
+        _mesh->data(*curEdge).thickness = 1;
+        _mesh->set_color(*curEdge, MyMesh::Color(0, 0, 0));
+    }
 }

@@ -12,11 +12,12 @@
 class Mesh
 {
 public:
-    Mesh(MyMesh * mesh);
+    Mesh(MyMesh mesh);
     Mesh(QVector<MyMesh::Point> points);
 
     MyMesh compute_bounding_box();
     QVector3D compute_barycentre();
+    void resetAllColorsAndThickness(MyMesh* _mesh);
 
     // Changer la couleur
     void color_point_by_id(int id, int r, int g, int b);
@@ -33,6 +34,7 @@ public:
     void thickness_edge(EdgeHandle eh, float size);
 
     // Gerer l'affichage
+    void destroy_vbos();
     void load_data();
     void draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShaderProgram * program);
 

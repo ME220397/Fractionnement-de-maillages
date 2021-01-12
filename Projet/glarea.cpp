@@ -6,7 +6,26 @@
 #include <QSurfaceFormat>
 #include <QMatrix4x4>
 
+static const char *vertexShaderSourceM =
+    "attribute vec4 in_position;               \n"
+    "attribute lowp vec4 col;               \n"
+    "varying lowp vec4 color;               \n"
+    "uniform mat4 projectionMatrix;         \n"
+    "uniform mat4 viewMatrix;               \n"
+    "uniform mat4 modelMatrix;              \n"
+    "uniform float size;                    \n"
+    "void main() {                          \n"
+    "   color = col;                        \n"
+    "   vec4 pos = vec4(vec3(in_position), 1.0);                   \n"
+    "   gl_Position = projectionMatrix * viewMatrix * modelMatrix * pos;          \n"
+    "}                                      \n";
 
+// shader appliqué à un fragment = un morceau rasterisé d'une primitive graphique
+static const char *fragmentShaderSourceM =
+    "varying lowp vec4 color;               \n"
+    "void main() {                          \n"
+    "   gl_FragColor = color;               \n"
+    "}                                      \n";
 
 GLArea::GLArea(QWidget *parent) :
     QOpenGLWidget(parent)
@@ -48,17 +67,30 @@ void GLArea::initializeGL()
 
     makeGLObjects();
 
+    program_mesh = new QOpenGLShaderProgram(this);
+    program_mesh->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSourceM);
+    program_mesh->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShaderSourceM);
+    if (! program_mesh->link()) {  // édition de lien des shaders dans le shader program
+       qWarning("Failed to compile and link shader program:");
+       qWarning() << program_mesh->log();
+    }
+
 }
 
 
 void GLArea::makeGLObjects()
 {
-
+    for(Mesh p : meshes){
+        p.load_data();
+    }
 }
 
 
 void GLArea::tearGLObjects()
 {
+    for(Mesh p : meshes){
+        p.destroy_vbos();
+    }
 }
 
 
@@ -72,7 +104,6 @@ void GLArea::resizeGL(int w, int h)
 void GLArea::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // Matrice de projection
     QMatrix4x4 projectionMatrix;
     projectionMatrix.perspective(45.0f, windowRatio, 1.0f, 1000.0f);
@@ -83,6 +114,10 @@ void GLArea::paintGL()
     viewMatrix.rotate(xRot, 1, 0, 0);
     viewMatrix.rotate(yRot, 0, 1, 0);
     viewMatrix.rotate(zRot, 0, 0, 1);
+
+    for(Mesh p : meshes){
+        p.draw(projectionMatrix, viewMatrix, program_mesh);
+    }
 }
 
 
@@ -181,4 +216,10 @@ void GLArea::wheelEvent(QWheelEvent *_event){
     float dz = -(float)_event->delta() / 120.0 * 0.2;
     zPos += dz;
     update();
+}
+
+void GLArea::onMeshLoaded(MyMesh mesh){
+    Mesh newMesh(mesh);
+    newMesh.load_data();
+    meshes.push_back(newMesh);
 }
