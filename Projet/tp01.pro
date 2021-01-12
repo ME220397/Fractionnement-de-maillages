@@ -32,10 +32,12 @@ macx: {
 }
 
 SOURCES += main.cpp\
+        geometry.cpp \
         princ.cpp \
         glarea.cpp
 
 HEADERS  += princ.h \
+        geometry.h \
         glarea.h
 
 FORMS    += princ.ui
