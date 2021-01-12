@@ -212,3 +212,163 @@ void Mesh::load_data(){
         vbo_point.allocate(vert_data.constData(), vert_data.count() * sizeof(GLfloat));
     }
 }
+
+void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShaderProgram *program){
+    if(edge_to_draw > 0){
+        vbo_line.bind();
+        program->bind();
+        QMatrix4x4 modelLineMatrix;
+        modelLineMatrix.translate(0.0f, 0.0f, 0.0f);
+
+        program->setUniformValue("projectionMatrix", projectionMatrix);
+        program->setUniformValue("viewMatrix", viewMatrix);
+        program->setUniformValue("modelMatrix", modelLineMatrix);
+
+        program->setAttributeBuffer("in_position", GL_FLOAT ,0, 3,  6*sizeof(GLfloat));
+        program->setAttributeBuffer("col", GL_FLOAT, 3*sizeof (GLfloat), 3, 6*sizeof(GLfloat));
+
+        program->enableAttributeArray("in_position");
+        program->enableAttributeArray("col");
+
+        glDrawArrays(GL_LINES, 0, edge_to_draw);
+
+        program->disableAttributeArray("in_position");
+        program->disableAttributeArray("col");
+
+        program->release();
+    }
+
+    if(face_to_draw > 0){
+        vbo_face.bind();
+        program->bind();
+        QMatrix4x4 modelFaceMatrix;
+        modelFaceMatrix.translate(0.0f, 0.0f, 0.0f);
+
+        program->setUniformValue("projectionMatrix", projectionMatrix);
+        program->setUniformValue("viewMatrix", viewMatrix);
+        program->setUniformValue("modelMatrix", modelFaceMatrix);
+
+        program->setAttributeBuffer("in_position", GL_FLOAT ,0, 3,  6*sizeof(GLfloat));
+        program->setAttributeBuffer("col", GL_FLOAT, 3*sizeof (GLfloat), 3, 6*sizeof(GLfloat));
+
+        program->enableAttributeArray("in_position");
+        program->enableAttributeArray("col");
+
+        glDrawArrays(GL_TRIANGLES, 0, face_to_draw);
+
+        program->disableAttributeArray("in_position");
+        program->disableAttributeArray("col");
+
+        program->release();
+    }
+
+    if(vert_to_draw > 0){
+        vbo_point.bind();
+        program->bind();
+        QMatrix4x4 modelVertMatrix;
+        modelVertMatrix.translate(0.0f, 0.0f, 0.0f);
+
+        program->setUniformValue("projectionMatrix", projectionMatrix);
+        program->setUniformValue("viewMatrix", viewMatrix);
+        program->setUniformValue("modelMatrix", modelVertMatrix);
+
+        program->setAttributeBuffer("in_position", GL_FLOAT ,0, 3,  6*sizeof(GLfloat));
+        program->setAttributeBuffer("col", GL_FLOAT, 3*sizeof (GLfloat), 3, 6*sizeof(GLfloat));
+
+        program->enableAttributeArray("in_position");
+        program->enableAttributeArray("col");
+
+        glDrawArrays(GL_POINTS, 0, vert_to_draw);
+
+        program->disableAttributeArray("in_position");
+        program->disableAttributeArray("col");
+
+        program->release();
+    }
+}
+
+MyMesh Mesh::compute_bounding_box(){
+    MyMesh *_mesh = &mesh;
+    MyMesh::Point min, max;
+    MyMesh bbox;
+    if((int)_mesh->n_vertices() > 0){
+        VertexHandle first = _mesh->vertex_handle(0);
+        min = _mesh->point(first); max = _mesh->point(first);
+
+        for(MyMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); v_it++ ){
+            MyMesh::Point current = _mesh->point(*v_it);
+
+            if(min[0] > current[0])
+                min[0] = current[0];
+            if(min[1] > current[1])
+                min[1] = current[1];
+            if(min[2] > current[2])
+                min[2] = current[2];
+
+            if(max[0] < current[0])
+                max[0] = current[0];
+            if(max[1] < current[1])
+                max[1] = current[1];
+            if(max[2] < current[2])
+                max[2] = current[2];
+        }
+
+        //Creation des points de la bounding box
+        MyMesh::VertexHandle vhandle[8];
+
+        vhandle[0] = bbox.add_vertex(MyMesh::Point(min[0], min[1], max[2]));
+        vhandle[1] = bbox.add_vertex(MyMesh::Point(max[0], min[1],  max[2]));
+        vhandle[2] = bbox.add_vertex(MyMesh::Point(max[0], max[1],  max[2]));
+        vhandle[3] = bbox.add_vertex(MyMesh::Point(min[0],  max[1],  max[2]));
+        vhandle[4] = bbox.add_vertex(MyMesh::Point(min[0], min[1], min[2]));
+        vhandle[5] = bbox.add_vertex(MyMesh::Point(max[0], min[1], max[2]));
+        vhandle[6] = bbox.add_vertex(MyMesh::Point( max[0],  max[1], min[2]));
+        vhandle[7] = bbox.add_vertex(MyMesh::Point(min[0], max[1], min[2]));
+
+        std::vector<MyMesh::VertexHandle>  face_vhandles;
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[0]);
+        face_vhandles.push_back(vhandle[1]);
+        face_vhandles.push_back(vhandle[2]);
+        face_vhandles.push_back(vhandle[3]);
+        bbox.add_face(face_vhandles);
+
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[7]);
+        face_vhandles.push_back(vhandle[6]);
+        face_vhandles.push_back(vhandle[5]);
+        face_vhandles.push_back(vhandle[4]);
+        bbox.add_face(face_vhandles);
+
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[1]);
+        face_vhandles.push_back(vhandle[0]);
+        face_vhandles.push_back(vhandle[4]);
+        face_vhandles.push_back(vhandle[5]);
+        bbox.add_face(face_vhandles);
+
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[2]);
+        face_vhandles.push_back(vhandle[1]);
+        face_vhandles.push_back(vhandle[5]);
+        face_vhandles.push_back(vhandle[6]);
+        bbox.add_face(face_vhandles);
+
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[3]);
+        face_vhandles.push_back(vhandle[2]);
+        face_vhandles.push_back(vhandle[6]);
+        face_vhandles.push_back(vhandle[7]);
+        bbox.add_face(face_vhandles);
+
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[0]);
+        face_vhandles.push_back(vhandle[3]);
+        face_vhandles.push_back(vhandle[7]);
+        face_vhandles.push_back(vhandle[4]);
+        bbox.add_face(face_vhandles);
+
+    }
+
+    return bbox;
+}

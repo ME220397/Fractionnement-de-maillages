@@ -15,6 +15,9 @@ public:
     Mesh(MyMesh * mesh);
     Mesh(QVector<MyMesh::Point> points);
 
+    MyMesh compute_bounding_box();
+    QVector3D compute_barycentre();
+
     // Changer la couleur
     void color_point_by_id(int id, int r, int g, int b);
     void color_point(VertexHandle vh, int r, int g, int b);
