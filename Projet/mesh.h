@@ -32,6 +32,10 @@ public:
     void color_edge_by_id(int id, int r, int g, int b);
     void color_edge(EdgeHandle eh, int r, int g, int b);
 
+    void color_all_faces(int r, int g, int b);
+    void color_all_edges(int r, int g, int b);
+    void color_all_points(int r, int g, int b);
+
     // Changer la taille
     void thickness_point_by_id(int id, float size);
     void thickness_point(VertexHandle vh, float size);
