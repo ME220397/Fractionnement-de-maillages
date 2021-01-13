@@ -80,6 +80,12 @@ void Mesh::color_all_faces(int r, int g, int b){
     }
 }
 
+void Mesh::color_all_edges(int r, int g, int b){
+    MyMesh *_mesh = &mesh;
+    for(MyMesh::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); e_it++){
+        color_edge(*e_it, r, g, b);
+    }
+}
 // Fonctions pour changer la taille
 
 void Mesh::thickness_point_by_id(int id, float size){
