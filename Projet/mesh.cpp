@@ -4,6 +4,9 @@ Mesh::Mesh(MyMesh mesh, QVector3D position)
 {
     this->mesh = mesh;
     this->position = position;
+    this->show_faces = true;
+    this->show_edges = true;
+    this->show_points = true;
     resetAllColorsAndThickness(&this->mesh);
 }
 
@@ -12,7 +15,24 @@ Mesh::Mesh(QVector<MyMesh::Point> points, QVector3D position){
         this->mesh.add_vertex(p);
     }
     this->position = position;
+    this->show_faces = true;
+    this->show_edges = true;
+    this->show_points = true;
     resetAllColorsAndThickness(&this->mesh);
+}
+
+// Setters
+
+void Mesh::set_faces_visible(bool s){
+    show_faces = s;
+}
+
+void Mesh::set_edges_visible(bool s){
+    show_edges = s;
+}
+
+void Mesh::set_vertices_visible(bool s){
+    show_points = s;
 }
 
 // Fonctions pour changer la couleur
@@ -122,7 +142,7 @@ void Mesh::load_data(){
         MyMesh::Color col_v1 = _mesh->color(*f_it);
         MyMesh::Color col_v2 = _mesh->color(*f_it);
         MyMesh::Color col_v3 = _mesh->color(*f_it);
-        qDebug() << col_v1[0] << " " << col_v1[1] << " " << col_v1[2];
+
         face_color[cpt] = float(col_v1[0])/255.f;face_color[cpt+1] = float(col_v1[1])/255.f;face_color[cpt+2] = float(col_v1[2])/255.f;
         face_color[cpt+3] = float(col_v2[0])/255.f;face_color[cpt+4] = float(col_v2[1])/255.f;face_color[cpt+5] = float(col_v2[2])/255.f;
         face_color[cpt+6] = float(col_v3[0])/255.f;face_color[cpt+7] = float(col_v3[1])/255.f;face_color[cpt+8] = float(col_v3[2])/255.f;
@@ -224,7 +244,7 @@ void Mesh::load_data(){
 }
 
 void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShaderProgram *program){
-    if(edge_to_draw > 0){
+    if(edge_to_draw > 0 && show_edges){
         vbo_line.bind();
         program->bind();
         QMatrix4x4 modelLineMatrix;
@@ -249,7 +269,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->release();
     }
 
-    if(face_to_draw > 0){
+    if(face_to_draw > 0 && show_faces){
         vbo_face.bind();
         program->bind();
         QMatrix4x4 modelFaceMatrix;
@@ -273,7 +293,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->release();
     }
 
-    if(vert_to_draw > 0){
+    if(vert_to_draw > 0 && show_points){
         vbo_point.bind();
         program->bind();
         QMatrix4x4 modelVertMatrix;
@@ -421,11 +441,6 @@ MyMesh Mesh::compute_bounding_box(){
         face_vhandles.push_back(vhandle[4]);
         face_vhandles.push_back(vhandle[0]);
         bbox.add_face(face_vhandles);
-
-        for(MyMesh::EdgeIter e_it = bbox.edges_begin(); e_it != bbox.edges_end(); e_it++){
-            bbox.set_color(*e_it, MyMesh::Color(255, 0, 0));
-        }
-
     }
 
     return bbox;

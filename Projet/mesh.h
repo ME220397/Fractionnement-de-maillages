@@ -19,6 +19,11 @@ public:
     QVector3D compute_barycentre();
     void resetAllColorsAndThickness(MyMesh* _mesh);
 
+    // Setters
+    void set_faces_visible(bool s);
+    void set_edges_visible(bool s);
+    void set_vertices_visible(bool s);
+
     // Changer la couleur
     void color_point_by_id(int id, int r, int g, int b);
     void color_point(VertexHandle vh, int r, int g, int b);
@@ -48,6 +53,10 @@ private:
     int vert_to_draw;
     int face_to_draw;
     int edge_to_draw;
+
+    bool show_faces;
+    bool show_edges;
+    bool show_points;
 
 };
 

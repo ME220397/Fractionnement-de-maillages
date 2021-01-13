@@ -226,6 +226,7 @@ void GLArea::onMeshLoaded(MyMesh mesh){
     MyMesh box = newMesh.compute_bounding_box();
     Mesh bbox(box, pos);
     bbox.load_data();
+    bbox.set_faces_visible(false);
     meshes.push_back(newMesh);
     meshes.push_back(bbox);
 }
