@@ -219,7 +219,13 @@ void GLArea::wheelEvent(QWheelEvent *_event){
 }
 
 void GLArea::onMeshLoaded(MyMesh mesh){
-    Mesh newMesh(mesh);
+    QVector3D pos(posX, 0, 0);
+    posX+=6;
+    Mesh newMesh(mesh, pos);
     newMesh.load_data();
+    MyMesh box = newMesh.compute_bounding_box();
+    Mesh bbox(box, pos);
+    bbox.load_data();
     meshes.push_back(newMesh);
+    meshes.push_back(bbox);
 }

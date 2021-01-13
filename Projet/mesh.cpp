@@ -1,15 +1,17 @@
 #include "mesh.h"
 
-Mesh::Mesh(MyMesh mesh)
+Mesh::Mesh(MyMesh mesh, QVector3D position)
 {
     this->mesh = mesh;
+    this->position = position;
     resetAllColorsAndThickness(&this->mesh);
 }
 
-Mesh::Mesh(QVector<MyMesh::Point> points){
+Mesh::Mesh(QVector<MyMesh::Point> points, QVector3D position){
     for(MyMesh::Point p : points){
         this->mesh.add_vertex(p);
     }
+    this->position = position;
     resetAllColorsAndThickness(&this->mesh);
 }
 
@@ -226,7 +228,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         vbo_line.bind();
         program->bind();
         QMatrix4x4 modelLineMatrix;
-        modelLineMatrix.translate(0.0f, 0.0f, 0.0f);
+        modelLineMatrix.translate(position);
 
         program->setUniformValue("projectionMatrix", projectionMatrix);
         program->setUniformValue("viewMatrix", viewMatrix);
@@ -238,6 +240,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->enableAttributeArray("in_position");
         program->enableAttributeArray("col");
 
+        glLineWidth(1.0f); //
         glDrawArrays(GL_LINES, 0, edge_to_draw*2);
 
         program->disableAttributeArray("in_position");
@@ -250,7 +253,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         vbo_face.bind();
         program->bind();
         QMatrix4x4 modelFaceMatrix;
-        modelFaceMatrix.translate(0.0f, 0.0f, 0.0f);
+        modelFaceMatrix.translate(position);
 
         program->setUniformValue("projectionMatrix", projectionMatrix);
         program->setUniformValue("viewMatrix", viewMatrix);
@@ -274,7 +277,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         vbo_point.bind();
         program->bind();
         QMatrix4x4 modelVertMatrix;
-        modelVertMatrix.translate(0.0f, 0.0f, 0.0f);
+        modelVertMatrix.translate(position);
 
         program->setUniformValue("projectionMatrix", projectionMatrix);
         program->setUniformValue("viewMatrix", viewMatrix);
@@ -324,57 +327,104 @@ MyMesh Mesh::compute_bounding_box(){
         //Creation des points de la bounding box
         MyMesh::VertexHandle vhandle[8];
 
-        vhandle[0] = bbox.add_vertex(MyMesh::Point(min[0], min[1], max[2]));
-        vhandle[1] = bbox.add_vertex(MyMesh::Point(max[0], min[1],  max[2]));
-        vhandle[2] = bbox.add_vertex(MyMesh::Point(max[0], max[1],  max[2]));
-        vhandle[3] = bbox.add_vertex(MyMesh::Point(min[0],  max[1],  max[2]));
-        vhandle[4] = bbox.add_vertex(MyMesh::Point(min[0], min[1], min[2]));
-        vhandle[5] = bbox.add_vertex(MyMesh::Point(max[0], min[1], max[2]));
-        vhandle[6] = bbox.add_vertex(MyMesh::Point( max[0],  max[1], min[2]));
-        vhandle[7] = bbox.add_vertex(MyMesh::Point(min[0], max[1], min[2]));
+        vhandle[0] = bbox.add_vertex(MyMesh::Point(min[0], min[1], max[2])); // -1 -1 1
+        vhandle[1] = bbox.add_vertex(MyMesh::Point(max[0], min[1], max[2])); // 1 -1 1
+        vhandle[2] = bbox.add_vertex(max); // 1 1 1
+        vhandle[3] = bbox.add_vertex(MyMesh::Point(min[0], max[1], max[2])); // -1 1 1
+        vhandle[4] = bbox.add_vertex(min); // -1 -1 -1
+        vhandle[5] = bbox.add_vertex(MyMesh::Point(max[0], min[1], min[2])); // 1 -1 -1
+        vhandle[6] = bbox.add_vertex(MyMesh::Point(max[0], max[1], min[2])); // 1 1 -1
+        vhandle[7] = bbox.add_vertex(MyMesh::Point(min[0], max[1], min[2])); // -1 1 -1
 
         std::vector<MyMesh::VertexHandle>  face_vhandles;
+
+        // face 0 1 2
         face_vhandles.clear();
         face_vhandles.push_back(vhandle[0]);
         face_vhandles.push_back(vhandle[1]);
         face_vhandles.push_back(vhandle[2]);
-        face_vhandles.push_back(vhandle[3]);
         bbox.add_face(face_vhandles);
 
+        // face 2 3 0
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[2]);
+        face_vhandles.push_back(vhandle[3]);
+        face_vhandles.push_back(vhandle[0]);
+        bbox.add_face(face_vhandles);
+
+        // face 7 6 5
         face_vhandles.clear();
         face_vhandles.push_back(vhandle[7]);
         face_vhandles.push_back(vhandle[6]);
         face_vhandles.push_back(vhandle[5]);
-        face_vhandles.push_back(vhandle[4]);
         bbox.add_face(face_vhandles);
 
+        // face 5 4 7
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[5]);
+        face_vhandles.push_back(vhandle[4]);
+        face_vhandles.push_back(vhandle[7]);
+        bbox.add_face(face_vhandles);
+
+        // face 1 0 4
         face_vhandles.clear();
         face_vhandles.push_back(vhandle[1]);
         face_vhandles.push_back(vhandle[0]);
         face_vhandles.push_back(vhandle[4]);
-        face_vhandles.push_back(vhandle[5]);
         bbox.add_face(face_vhandles);
 
+        // face 4 5 1
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[4]);
+        face_vhandles.push_back(vhandle[5]);
+        face_vhandles.push_back(vhandle[1]);
+        bbox.add_face(face_vhandles);
+
+        // face 2 1 5
         face_vhandles.clear();
         face_vhandles.push_back(vhandle[2]);
         face_vhandles.push_back(vhandle[1]);
         face_vhandles.push_back(vhandle[5]);
-        face_vhandles.push_back(vhandle[6]);
         bbox.add_face(face_vhandles);
 
+        // face 5 6 2
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[5]);
+        face_vhandles.push_back(vhandle[6]);
+        face_vhandles.push_back(vhandle[2]);
+        bbox.add_face(face_vhandles);
+
+        // face 3 2 6
         face_vhandles.clear();
         face_vhandles.push_back(vhandle[3]);
         face_vhandles.push_back(vhandle[2]);
         face_vhandles.push_back(vhandle[6]);
-        face_vhandles.push_back(vhandle[7]);
         bbox.add_face(face_vhandles);
 
+        // face 6 7 3
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[6]);
+        face_vhandles.push_back(vhandle[7]);
+        face_vhandles.push_back(vhandle[3]);
+        bbox.add_face(face_vhandles);
+
+        // face 0 3 7
         face_vhandles.clear();
         face_vhandles.push_back(vhandle[0]);
         face_vhandles.push_back(vhandle[3]);
         face_vhandles.push_back(vhandle[7]);
-        face_vhandles.push_back(vhandle[4]);
         bbox.add_face(face_vhandles);
+
+        // face 7 4 0
+        face_vhandles.clear();
+        face_vhandles.push_back(vhandle[7]);
+        face_vhandles.push_back(vhandle[4]);
+        face_vhandles.push_back(vhandle[0]);
+        bbox.add_face(face_vhandles);
+
+        for(MyMesh::EdgeIter e_it = bbox.edges_begin(); e_it != bbox.edges_end(); e_it++){
+            bbox.set_color(*e_it, MyMesh::Color(255, 0, 0));
+        }
 
     }
 
