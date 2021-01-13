@@ -65,7 +65,8 @@ private:
     bool show_edges;
     bool show_points;
 
-    float thickness;
+    float thick_edge;
+    float thick_point;
 };
 
 #endif // MESH_H

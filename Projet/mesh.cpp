@@ -7,7 +7,8 @@ Mesh::Mesh(MyMesh mesh, QVector3D position)
     this->show_faces = true;
     this->show_edges = true;
     this->show_points = true;
-    this->thickness = 1.0f;
+    this->thick_edge = 1.0f;
+    this->thick_point = 1.0f;
     resetAllColorsAndThickness(&this->mesh);
 }
 
@@ -16,10 +17,11 @@ Mesh::Mesh(QVector<MyMesh::Point> points, QVector3D position){
         this->mesh.add_vertex(p);
     }
     this->position = position;
-    this->show_faces = true;
-    this->show_edges = true;
+    this->show_faces = false;
+    this->show_edges = false;
     this->show_points = true;
-    this->thickness = 1.0f;
+    this->thick_edge = 1.0f;
+    this->thick_point = 1.0f;
     resetAllColorsAndThickness(&this->mesh);
 }
 
@@ -124,7 +126,7 @@ void Mesh::thickness_edge(EdgeHandle eh, float size){
 
 void Mesh::set_thickness_all_edges(float f){
     MyMesh *_mesh = &mesh;
-    thickness = f;
+    thick_edge = f;
     for(MyMesh::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); e_it++){
         thickness_edge(*e_it, f);
     }
@@ -132,7 +134,7 @@ void Mesh::set_thickness_all_edges(float f){
 
 void Mesh::set_thickness_all_points(float f){
     MyMesh *_mesh = &mesh;
-    thickness = f;
+    thick_point = f;
     for(MyMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); v_it++){
         thickness_point(*v_it, f);
     }
@@ -263,6 +265,8 @@ void Mesh::load_data(){
         // On récupère la couleur
         MyMesh::Color col_v = _mesh->color(*v_it);
         vert_color[cpt] = float(col_v[0])/255.f;vert_color[cpt+1] = float(col_v[1])/255.f;vert_color[cpt+2] = float(col_v[2])/255.f;
+
+        cpt += 3;
     }
 
     QVector<GLfloat> vert_data;
@@ -292,6 +296,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->setUniformValue("projectionMatrix", projectionMatrix);
         program->setUniformValue("viewMatrix", viewMatrix);
         program->setUniformValue("modelMatrix", modelLineMatrix);
+        program->setUniformValue("size", 1.0f);
 
         program->setAttributeBuffer("in_position", GL_FLOAT ,0, 3,  6*sizeof(GLfloat));
         program->setAttributeBuffer("col", GL_FLOAT, 3*sizeof (GLfloat), 3, 6*sizeof(GLfloat));
@@ -299,7 +304,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->enableAttributeArray("in_position");
         program->enableAttributeArray("col");
 
-        glLineWidth(thickness); //
+        glLineWidth(thick_edge); //
         glDrawArrays(GL_LINES, 0, edge_to_draw*2);
 
         program->disableAttributeArray("in_position");
@@ -317,6 +322,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->setUniformValue("projectionMatrix", projectionMatrix);
         program->setUniformValue("viewMatrix", viewMatrix);
         program->setUniformValue("modelMatrix", modelFaceMatrix);
+        program->setUniformValue("size", 1.0f);
 
         program->setAttributeBuffer("in_position", GL_FLOAT ,0, 3,  6*sizeof(GLfloat));
         program->setAttributeBuffer("col", GL_FLOAT, 3*sizeof (GLfloat), 3, 6*sizeof(GLfloat));
@@ -341,6 +347,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->setUniformValue("projectionMatrix", projectionMatrix);
         program->setUniformValue("viewMatrix", viewMatrix);
         program->setUniformValue("modelMatrix", modelVertMatrix);
+        program->setUniformValue("size", 1.0F);
 
         program->setAttributeBuffer("in_position", GL_FLOAT ,0, 3,  6*sizeof(GLfloat));
         program->setAttributeBuffer("col", GL_FLOAT, 3*sizeof (GLfloat), 3, 6*sizeof(GLfloat));
@@ -348,6 +355,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->enableAttributeArray("in_position");
         program->enableAttributeArray("col");
 
+        glPointSize(thick_point);
         glDrawArrays(GL_POINTS, 0, vert_to_draw);
 
         program->disableAttributeArray("in_position");

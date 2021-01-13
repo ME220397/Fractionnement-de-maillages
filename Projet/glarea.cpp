@@ -16,7 +16,7 @@ static const char *vertexShaderSourceM =
     "uniform float size;                    \n"
     "void main() {                          \n"
     "   color = col;                        \n"
-    "   vec4 pos = vec4(vec3(in_position), 1.0);                   \n"
+    "   vec4 pos = vec4(vec3(in_position)*size, 1.0);                   \n"
     "   gl_Position = projectionMatrix * viewMatrix * modelMatrix * pos;          \n"
     "}                                      \n";
 
@@ -226,7 +226,9 @@ void GLArea::onMeshLoaded(MyMesh mesh){
     MyMesh box = newMesh.compute_bounding_box();
     Mesh bbox(box, pos);
     bbox.color_all_edges(255, 0, 0);
-    bbox.set_thickness_all_edges(2.0f);
+    bbox.color_all_points(0, 0, 255);
+    bbox.set_thickness_all_edges(1.0f);
+    bbox.set_thickness_all_points(15.f);
     bbox.load_data();
     bbox.set_faces_visible(false);
     meshes.push_back(newMesh);
