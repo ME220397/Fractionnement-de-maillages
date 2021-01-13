@@ -12,6 +12,7 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
+#include "mesh.h"
 
 class GLArea : public QOpenGLWidget,
                protected QOpenGLFunctions
@@ -24,6 +25,7 @@ public:
 
 protected slots:
     void onTimeout();
+    void onMeshLoaded(MyMesh mesh);
 
 protected:
     void initializeGL() override;
@@ -47,13 +49,16 @@ private:
     QPoint lastPos;
 
     QOpenGLShaderProgram *program_sol;
-    QOpenGLShaderProgram *program_particule;
+    QOpenGLShaderProgram *program_mesh;
     QOpenGLBuffer vbo_sol;
     QOpenGLBuffer vbo_particule;
     QOpenGLTexture *textures[2];
 
     void makeGLObjects();
     void tearGLObjects();
+
+    vector<Mesh> meshes;
+
 };
 
 #endif // GLAREA_H
