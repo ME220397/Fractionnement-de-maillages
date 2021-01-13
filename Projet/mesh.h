@@ -42,6 +42,9 @@ public:
     void thickness_edge_by_id(int id, float size);
     void thickness_edge(EdgeHandle eh, float size);
 
+    void set_thickness_all_edges(float f);
+    void set_thickness_all_points(float f);
+
     // Gerer l'affichage
     void destroy_vbos();
     void load_data();
@@ -62,6 +65,7 @@ private:
     bool show_edges;
     bool show_points;
 
+    float thickness;
 };
 
 #endif // MESH_H

@@ -7,6 +7,7 @@ Mesh::Mesh(MyMesh mesh, QVector3D position)
     this->show_faces = true;
     this->show_edges = true;
     this->show_points = true;
+    this->thickness = 1.0f;
     resetAllColorsAndThickness(&this->mesh);
 }
 
@@ -18,6 +19,7 @@ Mesh::Mesh(QVector<MyMesh::Point> points, QVector3D position){
     this->show_faces = true;
     this->show_edges = true;
     this->show_points = true;
+    this->thickness = 1.0f;
     resetAllColorsAndThickness(&this->mesh);
 }
 
@@ -118,6 +120,22 @@ void Mesh::thickness_edge_by_id(int id, float size){
 void Mesh::thickness_edge(EdgeHandle eh, float size){
     MyMesh *_mesh = &mesh;
     _mesh->data(eh).thickness = size;
+}
+
+void Mesh::set_thickness_all_edges(float f){
+    MyMesh *_mesh = &mesh;
+    thickness = f;
+    for(MyMesh::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); e_it++){
+        thickness_edge(*e_it, f);
+    }
+}
+
+void Mesh::set_thickness_all_points(float f){
+    MyMesh *_mesh = &mesh;
+    thickness = f;
+    for(MyMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); v_it++){
+        thickness_point(*v_it, f);
+    }
 }
 
 // Gestion de l'affichage
@@ -281,7 +299,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->enableAttributeArray("in_position");
         program->enableAttributeArray("col");
 
-        glLineWidth(1.0f); //
+        glLineWidth(thickness); //
         glDrawArrays(GL_LINES, 0, edge_to_draw*2);
 
         program->disableAttributeArray("in_position");

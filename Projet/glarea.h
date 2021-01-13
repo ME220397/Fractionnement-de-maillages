@@ -58,7 +58,7 @@ private:
     void tearGLObjects();
 
     vector<Mesh> meshes;
-    float posX = 0.0f;
+
 };
 
 #endif // GLAREA_H
