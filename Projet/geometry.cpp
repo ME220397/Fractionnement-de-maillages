@@ -77,7 +77,6 @@ bool Geometry::intersected(Plane p1, Plane p2){
 
     // On utilise le vecteur u du plan p2 pour creer un quatrieme point partant de la position du plan p1
     // et un cinquieme point à partir du vecteur v de p2
-    // On verifie si le polygone ainsi formé est coplanaire
     QVector3D v0 = to_Qvector3D(p1.get_position());
     QVector3D v1 = to_Qvector3D(p1.get_u());
     QVector3D v2 = to_Qvector3D(p1.get_v());
@@ -91,6 +90,7 @@ bool Geometry::intersected(Plane p1, Plane p2){
     v_local.append(M * v3);
     v_local.append(M * v4);
 
+     // On verifie si le polygone ainsi formé est planaire
     for(QVector3D v : v_local){
         if(v[2] != 0)
             est_coplanaire = false;
