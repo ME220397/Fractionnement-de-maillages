@@ -95,6 +95,10 @@ QVector3D Geometry::to_Qvector3D(MyMesh::Point p){
     return QVector3D(x, y, z);
 }
 
+MyMesh::Point Geometry::to_point(QVector3D q){
+    return MyMesh::Point(q[0], q[1], q[2]);
+}
+
 QVector3D Geometry::get_normal(Plane p){
     QVector3D u_prime = to_Qvector3D(p.get_u());
     QVector3D v_prime = to_Qvector3D(p.get_v());

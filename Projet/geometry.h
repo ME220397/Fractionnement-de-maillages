@@ -17,9 +17,9 @@ public:
     Line get_intersection_line(Plane p, Plane q); //Recupere la droite d'intersection de deux plans
 
     // Geometry on plane
-        //Static Functions
     static bool intersected(Plane p1, Plane p2);
-    static QVector3D to_Qvector3D(MyMesh::Point);
+    static QVector3D to_Qvector3D(MyMesh::Point p);
+    static MyMesh::Point to_point(QVector3D q);
     static QMatrix4x4 change_of_base(Plane p);
     static QVector3D get_normal(Plane p);
     static QVector4D get_equation(Plane p);
