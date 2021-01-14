@@ -5,6 +5,7 @@
 #define PRINC_H
 
 #include "ui_princ.h"
+#include "MeshFormat.h"
 
 class Princ : public QMainWindow, private Ui::Princ
 {
@@ -12,6 +13,13 @@ class Princ : public QMainWindow, private Ui::Princ
 
 public:
     explicit Princ(QWidget *parent = nullptr);
+
+signals:
+    void mesh_loaded(MyMesh mesh);
+private slots:
+    void on_pushButton_clicked();
+private:
+    MyMesh mesh;
 };
 
 #endif // PRINC_H

@@ -32,13 +32,22 @@ macx: {
 }
 
 SOURCES += main.cpp\
-        geometry.cpp \
-        princ.cpp \
-        glarea.cpp
+	mesh.cpp \
+	geometry.cpp \
+	plane.cpp \
+	princ.cpp \
+	glarea.cpp \
+	seedgenerator.cpp
 
 HEADERS  += princ.h \
-        geometry.h \
-        glarea.h
+	glarea.h \
+	plane.h \
+	seedgenerator.h \
+	MeshFormat.h \
+	glarea.h \
+	mesh.h \
+	geometry.h \
+	glarea.h
 
 FORMS    += princ.ui
 
