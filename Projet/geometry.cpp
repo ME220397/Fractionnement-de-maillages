@@ -55,7 +55,17 @@ std::vector<MyMesh::Point> Geometry::get_mediator_plan(MyMesh::Point A, MyMesh::
     return med_plan;
 }
 
-bool Geometry::is_intersected(std::vector<MyMesh::Point> P, std::vector<MyMesh::Point> Q)
+
+bool Geometry::colinear(MyMesh::Point A, MyMesh::Point B)
+{
+    if(B[0] != 0, B[1] != 0, B[2] != 0)
+    {
+
+    }
+}
+
+
+bool Geometry::is_intersected(std::vector<MyMesh::Point> P, std::vector<MyMesh::Point> Q)//Verification si une coordonées des normales vaut 0 à faire
 {
     if(P.at(3)[0]/Q.at(3)[0] == P.at(3)[1]/Q.at(3)[1] && P.at(3)[0]/Q.at(3)[0] == P.at(3)[2]/Q.at(3)[2])
     {
