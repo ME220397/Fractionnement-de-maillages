@@ -126,6 +126,100 @@ QMatrix4x4 Geometry::change_of_base(Plane p){
     return M;
 }
 
+QVector4D Geometry::get_equation(Plane p)
+{
+    MyMesh::Point I; //Recuperation d'un point de p
+    I = p.get_position();
+
+    QVector3D n; //Recuperation de la normale
+    n = get_normal(p);
+
+    QVector4D eq_p(n[0], n[1], n[2],-(I[0]*n[0] + I[1]*n[1] + I[2]*n[2])); //coefficients de l'equation du plan p
+    return eq_p;
+}
+
+
+
+bool Geometry::is_perpendicular(MyMesh::Point p, MyMesh::Point q)
+{
+    if(p[0]*q[0] + p[1]*q[1] + p[2]*q[2] == 0) //Verification du produit scalaire
+    {
+        return true; //Cas Perpendiculaire
+    }
+    return false;
+}
+
+
+Line Geometry::get_intersection_line(Plane p, Plane q)
+{
+
+    QVector4D eq_p = get_equation(p); //Equation cartesienne de p : ax + by + cz +d = 0
+    float a, b, c, d;
+    a = eq_p[0];
+    b = eq_p[1];
+    c = eq_p[2];
+    d = eq_p[3];
+    QVector3D N = get_normal(p); //Normale de p
+    MyMesh::Point n;
+    n = to_point(N);
+
+    MyMesh::Point pos_q; //Un point de q
+    pos_q = q.get_position();
+    MyMesh::Point u_q; //Premier vecteur directeur de q
+    u_q = q.get_u();
+
+    if(is_perpendicular(n, u_q)) //Si la droite def par pos_q et u_q est parallele a p
+    {
+        u_q = q.get_v(); //On prend le deuxieme vecteur directeur car on sait qu'au moins un de ces deux vecteurs coupe le plan p
+    }
+
+    float t; //coefficient de la droite : pos_q + t*u_q
+    t = -(a*pos_q[0] + b*pos_q[1] + c*pos_q[2] + d)/(a*u_q[0] + b*u_q[1] + c*u_q[2]);
+    //Le denominateur n'est pas nul car c'est le produit scalaire
+    //entre la normale du plan p et la droite choisis non-perpendiculaire du plan q
+
+    MyMesh::Point X;
+    X[0] = pos_q[0] + t*u_q[0];
+    X[1] = pos_q[1] + t*u_q[1];
+    X[2] = pos_q[2] + t*u_q[2];
+
+
+    //On repete pour trouver un deuxieme point de la droite
+    eq_p = get_equation(q); //Equation cartesienne de q : ax + by + cz +d = 0
+    a = eq_p[0];
+    b = eq_p[1];
+    c = eq_p[2];
+    d = eq_p[3];
+
+    N = get_normal(q); //Normale de q
+    n = to_point(N);
+
+    pos_q = p.get_position(); //Un point de p
+    u_q = p.get_u(); //Premier vecteur directeur de p
+
+    if(is_perpendicular(n, u_q)) //Si la droitedu plan p def par pos_q et u_q est parallele au plan q
+    {
+        u_q = p.get_v(); //On prend le deuxieme vecteur directeur car on sait qu'au moins un de ces deux vecteurs coupe le plan q
+    }
+
+    t = -(a*pos_q[0] + b*pos_q[1] + c*pos_q[2] + d)/(a*u_q[0] + b*u_q[1] + c*u_q[2]);
+
+    MyMesh::Point Y;
+    Y[0] = pos_q[0] + t*u_q[0];
+    Y[1] = pos_q[1] + t*u_q[1];
+    Y[2] = pos_q[2] + t*u_q[2];
+
+    MyMesh::Point XY; //On a defini la droite comme etant un point et un vecteur
+    XY = get_vect(X, Y);
+
+    Line intersection_line(X, XY);
+    return intersection_line;
+}
+
+
+
+
+
 
 
 

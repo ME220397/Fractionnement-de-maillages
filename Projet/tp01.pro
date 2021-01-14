@@ -32,6 +32,7 @@ macx: {
 }
 
 SOURCES += main.cpp\
+	line.cpp \
 	mesh.cpp \
 	geometry.cpp \
 	plane.cpp \
@@ -41,6 +42,7 @@ SOURCES += main.cpp\
 
 HEADERS  += princ.h \
 	glarea.h \
+	line.h \
 	plane.h \
 	seedgenerator.h \
 	MeshFormat.h \
