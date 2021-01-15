@@ -53,8 +53,9 @@ MyMesh::Point SeedGenerator::get_minCoords(){
     return min_coord;
 }
 
+//Génère des points avec des positions aléatoire a l'intérieure de la bounding box de l'objet.
 void SeedGenerator::generateRand(){
-    MyMesh::Point  max_coord = get_minCoords();
+    MyMesh::Point  max_coord = get_maxCoords();
     MyMesh::Point min_coord = get_minCoords();
 
     std::random_device rd;
@@ -69,5 +70,50 @@ void SeedGenerator::generateRand(){
         float z = distrZ(eng);
         MyMesh::Point newPoint(x, y ,z);
         generatedPoints.push_back(newPoint);
+    }
+}
+
+//Génère des points tous a égal distance les uns des autres a l'interieur de la bounding box.
+void SeedGenerator::generateEquidistant(){
+
+    if(nbPoints%8 != 0) {
+        qDebug() << "Le nombre de points n'est pas un multiple de 8";
+        return;
+    }
+
+    MyMesh::Point max_coord = get_maxCoords();
+    MyMesh::Point min_coord = get_minCoords();
+
+    float nbCells = (float)nbPoints/4.0;
+
+    float x_t = max_coord[0] - min_coord[0];
+    float y_t = max_coord[1] - min_coord[1];
+    float z_t = max_coord[2] - min_coord[2];
+
+    float pas_x = x_t/nbCells;
+    float pas_y = y_t/nbCells;
+    float pas_z = z_t/nbCells;
+
+    //Parcours des x.
+    for(int i = 0; i < nbCells; i++){
+        float current_x = min_coord[0] + (pas_x*i);
+        float next_x = current_x + pas_x;
+
+        for(int j =0; j < nbCells; j++){
+            float current_y = min_coord[1] + (pas_y*j);
+            float next_y = current_y + pas_y;
+            for(int k =0; k < nbCells; k++){
+
+                float current_z = min_coord[2] + (pas_z*k);
+                float next_z = current_z + pas_z;
+
+
+                float x = (current_x + next_x)/2;
+                float y = (current_y + next_y)/2;
+                float z = (current_z + next_z)/2;
+                MyMesh::Point newPoint(x, y ,z);
+                generatedPoints.push_back(newPoint);
+            }
+        }
     }
 }

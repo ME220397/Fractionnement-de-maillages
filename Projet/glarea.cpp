@@ -234,3 +234,16 @@ void GLArea::onMeshLoaded(MyMesh mesh){
     meshes.push_back(newMesh);
     meshes.push_back(bbox);
 }
+
+void GLArea::getSeeds(MyMesh *mesh, int nbSeeds){
+    qDebug() << __FUNCTION__;
+    SeedGenerator seeds(mesh, nbSeeds);
+//    seeds.generateRand();
+    seeds.generateEquidistant();
+    QVector<MyMesh::Point> points = seeds.get_points();
+    Mesh seedsMesh(points, QVector3D(0.0f, 0.0f, 0.0f));
+    seedsMesh.set_thickness_all_points(15.f);
+    seedsMesh.color_all_points(255, 0, 0);
+    seedsMesh.load_data();
+    meshes.push_back(seedsMesh);
+}
