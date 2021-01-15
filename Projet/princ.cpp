@@ -10,6 +10,7 @@ Princ::Princ(QWidget *parent) : QMainWindow(parent)
 {
     setupUi(this);
     connect(this, SIGNAL(mesh_loaded(MyMesh)), glarea, SLOT(onMeshLoaded(MyMesh)));
+    connect(vue, SIGNAL(clicked()), glarea, SLOT(on_vue_clicked()));
 }
 
 void Princ::on_pushButton_clicked()

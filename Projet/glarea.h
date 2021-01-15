@@ -26,6 +26,7 @@ public:
 protected slots:
     void onTimeout();
     void onMeshLoaded(MyMesh mesh);
+    void on_vue_clicked();
 
 protected:
     void initializeGL() override;
@@ -58,7 +59,7 @@ private:
     void tearGLObjects();
 
     vector<Mesh> meshes;
-
+    bool face_mode;
 };
 
 #endif // GLAREA_H

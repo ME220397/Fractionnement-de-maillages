@@ -41,9 +41,16 @@
            </spacer>
           </item>
           <item>
+           <widget class="QPushButton" name="vue">
+            <property name="text">
+             <string>Changer de vue</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButton">
             <property name="text">
-             <string>Charger Mesh</string>
+             <string>Charger Objet</string>
             </property>
            </widget>
           </item>

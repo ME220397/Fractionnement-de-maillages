@@ -44,6 +44,7 @@ GLArea::GLArea(QWidget *parent) :
     connect (timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     timer->start();
     elapsedTimer.start();
+    face_mode = true;
 }
 
 
@@ -228,9 +229,26 @@ void GLArea::onMeshLoaded(MyMesh mesh){
     bbox.color_all_edges(255, 0, 0);
     bbox.color_all_points(0, 0, 255);
     bbox.set_thickness_all_edges(1.0f);
-    bbox.set_thickness_all_points(15.f);
+    bbox.set_thickness_all_points(2.f);
     bbox.load_data();
     bbox.set_faces_visible(false);
     meshes.push_back(newMesh);
     meshes.push_back(bbox);
+}
+
+void GLArea::on_vue_clicked(){
+    if(!meshes.empty()){
+        if(face_mode){
+            meshes.at(0).color_all_edges(255, 140, 0);
+            meshes.at(0).load_data();
+            face_mode = false;
+        }
+        else{
+            meshes.at(0).color_all_edges(0, 0, 0);
+            meshes.at(0).load_data();
+            face_mode = true;
+        }
+        meshes.at(0).set_faces_visible(face_mode);
+    }
+
 }
