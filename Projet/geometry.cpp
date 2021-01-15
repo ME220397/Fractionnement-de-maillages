@@ -33,20 +33,43 @@ Plane Geometry::get_mediator_plan(MyMesh::Point A, MyMesh::Point B)
     MyMesh::Point AB; //Le vecteur allant de A vers B
     AB = get_vect(A, B);
 
-    MyMesh::Point U; //Le premier vecteur du plan mediateur
-    MyMesh::Point V; //Le second vecteur du plan mediateur
-
     QMatrix4x4 Rx; //Creation de la matrice de rotation autour de l'axe x de 90 degres
     Rx.setToIdentity();
     Rx.rotate(90, QVector3D(1, 0, 0));
+
+    MyMesh::Point u;
+    MyMesh::Point v;
 
     QMatrix4x4 Ry; //Creation de la matrice de rotation autour de l'axe y de 90 degres
     Ry.setToIdentity();
     Ry.rotate(90, QVector3D(0, 1, 0));
 
-    QVector3D u = Rx * to_Qvector3D(AB);
-    QVector3D v = Ry * to_Qvector3D(AB);
+   /* QMatrix4x4 Rz; //Creation de la matrice de rotation autour de l'axe y de 90 degres
+    Rz.setToIdentity();
+    Rz.rotate(90, QVector3D(0, 0, 1));*/
 
+    if(AB[0] == 0 && AB[1] == 0)
+    {
+        u[0]=AB[2]; u[1] = 0; u[2] = 0;
+        v[0] = 0; v[1] = AB[2] ; v[2] = 0;
+    }
+    else if(AB[0] == 0 && AB[2] == 0)
+    {
+        u[0]=AB[1]; u[1] = 0; u[2] = 0;
+        v[0] = 0; v[1] = 0 ; v[2] = AB[1];
+    }
+    else if(AB[1] == 0 && AB[2] == 0)
+    {
+        u[0]=0; u[1] = 0; u[2] = AB[0];
+        v[0] = 0; v[1] = AB[0] ; v[2] = 0;
+    }
+    else
+    {
+        QVector3D U = Rx * to_Qvector3D(AB);
+        QVector3D V = Ry * to_Qvector3D(AB);
+        u = to_point(U);
+        v = to_point(V);
+    }
     Plane P(I, MyMesh::Point(u[0], u[1], u[2]), MyMesh::Point(v[0], v[1], v[2]));
     return P;
 }
@@ -166,16 +189,22 @@ Line Geometry::get_intersection_line(Plane p, Plane q)
     QVector3D N = get_normal(p); //Normale de p
     MyMesh::Point n;
     n = to_point(N);
-
-    MyMesh::Point pos_q; //Un point de q
+    MyMesh::Point pos_q2; //Un point de q
+    pos_q2 = q.get_position();
+    MyMesh::Point pos_q; //Un deuxieme point de q
     pos_q = q.get_position();
+
     MyMesh::Point u_q; //Premier vecteur directeur de q
     u_q = q.get_u();
 
     if(is_perpendicular(n, u_q)) //Si la droite def par pos_q et u_q est parallele a p
     {
+        pos_q2 += q.get_u();
         u_q = q.get_v(); //On prend le deuxieme vecteur directeur car on sait qu'au moins un de ces deux vecteurs coupe le plan p
     }
+    else
+        pos_q2 += q.get_v();
+
 
     float t; //coefficient de la droite : pos_q + t*u_q
     t = -(a*pos_q[0] + b*pos_q[1] + c*pos_q[2] + d)/(a*u_q[0] + b*u_q[1] + c*u_q[2]);
@@ -187,31 +216,13 @@ Line Geometry::get_intersection_line(Plane p, Plane q)
     X[1] = pos_q[1] + t*u_q[1];
     X[2] = pos_q[2] + t*u_q[2];
 
-
-    //On repete pour trouver un deuxieme point de la droite
-    eq_p = get_equation(q); //Equation cartesienne de q : ax + by + cz +d = 0
-    a = eq_p[0];
-    b = eq_p[1];
-    c = eq_p[2];
-    d = eq_p[3];
-
-    N = get_normal(q); //Normale de q
-    n = to_point(N);
-
-    pos_q = p.get_position(); //Un point de p
-    u_q = p.get_u(); //Premier vecteur directeur de p
-
-    if(is_perpendicular(n, u_q)) //Si la droitedu plan p def par pos_q et u_q est parallele au plan q
-    {
-        u_q = p.get_v(); //On prend le deuxieme vecteur directeur car on sait qu'au moins un de ces deux vecteurs coupe le plan q
-    }
-
-    t = -(a*pos_q[0] + b*pos_q[1] + c*pos_q[2] + d)/(a*u_q[0] + b*u_q[1] + c*u_q[2]);
+    t = -(a*pos_q2[0] + b*pos_q2[1] + c*pos_q2[2] + d)/(a*u_q[0] + b*u_q[1] + c*u_q[2]);
 
     MyMesh::Point Y;
-    Y[0] = pos_q[0] + t*u_q[0];
-    Y[1] = pos_q[1] + t*u_q[1];
-    Y[2] = pos_q[2] + t*u_q[2];
+    Y[0] = pos_q2[0] + t*u_q[0];
+    Y[1] = pos_q2[1] + t*u_q[1];
+    Y[2] = pos_q2[2] + t*u_q[2];
+
 
     MyMesh::Point XY; //On a defini la droite comme etant un point et un vecteur
     XY = get_vect(X, Y);
