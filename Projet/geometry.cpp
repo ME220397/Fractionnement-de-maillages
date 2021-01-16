@@ -85,7 +85,7 @@ bool Geometry::intersected(Plane p1, Plane p2){
             est_coplanaire = false;
     }
 
-    return est_coplanaire;
+    return est_coplanaire?false:true;
 }
 
 QVector3D Geometry::to_Qvector3D(MyMesh::Point p){
