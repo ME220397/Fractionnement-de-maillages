@@ -11,6 +11,7 @@ Princ::Princ(QWidget *parent) : QMainWindow(parent)
     setupUi(this);
     connect(this, SIGNAL(mesh_loaded(MyMesh)), glarea, SLOT(onMeshLoaded(MyMesh)));
     connect(vue, SIGNAL(clicked()), glarea, SLOT(on_vue_clicked()));
+    connect(this, SIGNAL(seeds_clicked(MyMesh*, int)), glarea, SLOT(getSeeds(MyMesh*, int)));
 }
 
 void Princ::on_pushButton_clicked()
@@ -22,4 +23,10 @@ void Princ::on_pushButton_clicked()
     if(OpenMesh::IO::read_mesh(mesh, fileName.toUtf8().constData())){
         mesh_loaded(mesh);
     }
+}
+
+
+void Princ::on_seeds_button_clicked()
+{
+    emit seeds_clicked(&mesh, 16);//il faut que ce soit un multiple de 8;
 }
