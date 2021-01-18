@@ -14,6 +14,7 @@ class Mesh
 public:
     Mesh(MyMesh mesh, QVector3D position);
     Mesh(QVector<MyMesh::Point> points, QVector3D position);
+    Mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces, QVector3D position);
 
     MyMesh compute_bounding_box();
     QVector3D compute_barycentre();
@@ -51,6 +52,9 @@ public:
     void draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShaderProgram * program);
 
 private:
+
+    void build_mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces);
+
     MyMesh mesh;
     QVector3D position;
     QOpenGLBuffer vbo_point;

@@ -130,6 +130,31 @@ QMatrix4x4 Geometry::change_of_base(Plane p){
     return M;
 }
 
+QMatrix4x4 Geometry::change_of_base(MyMesh::Point P, MyMesh::Point U, MyMesh::Point V){
+    QVector3D u_prime = to_Qvector3D(U);
+    QVector3D v_prime = to_Qvector3D(V);
+    QVector3D w = QVector3D::crossProduct(u_prime, v_prime);
+    w.normalize();                                  // Vecteur normal au plan
+    QVector3D u = u_prime.normalized();             // Vecteur directeur du                               // Vecteur normal au plan
+    QVector3D v = QVector3D::crossProduct(w, u);    // Vecteur directeur du plan
+    QVector3D position = to_Qvector3D(P);
+
+    float Px, Py, Pz;
+    Px = - QVector3D::dotProduct(position, u);
+    Py = - QVector3D::dotProduct(position, v);
+    Pz = - QVector3D::dotProduct(position, w);
+
+    // On récupère la matrice de changment de base
+    QMatrix4x4 M;
+
+    M(0, 0) = u.x(); M(0, 1) = u.y(); M(0, 2) = u.z(); M(0, 3) = Px;
+    M(1, 0) = v.x(); M(1, 1) = v.y(); M(1, 2) = v.z(); M(1, 3) = Py;
+    M(2, 0) = w.x(); M(2, 1) = w.y(); M(2, 2) = w.z(); M(2, 3) = Pz;
+    M(3, 0) = 0; M(3, 1) = 0; M(3, 2) = 0; M(3, 3) = 1;
+
+    return M;
+}
+
 QVector4D Geometry::get_equation(Plane p)
 {
     MyMesh::Point I; //Recuperation d'un point de p
@@ -220,9 +245,22 @@ Line Geometry::get_intersection_line(Plane p, Plane q)
     return intersection_line;
 }
 
+int Geometry::determinant(MyMesh::Point A, MyMesh::Point B, MyMesh::Point P){
+    // Les points doivent etre dans le même plan. La coordonnée Z n'est pas utilisé.
+    // Un fois que l'on a recuperé les points du triangle
+    // On verifie qu'un point P se situe a gauche de AB
+    /*
+                | Ax Bx Px |        det > 0 -> P à gauche
+          det = | Ay By Py |        det < 0 -> P à droite
+                | 1  1  1  |        det = 0 -> P inclu dans le segment
+                  | By Py |      | Ax Py |      | Ay Bx |
+          det = Ax| 1  1  | - Bx | 1  1  | + Px | 1  1 |
+     */
+    int x = 0, y = 1;
+    int det = A[x] * (B[y] - P[y]) - B[x] * (A[y] - P[y]) + P[x] * (A[y] - B[y]);
 
-
-
+    return det;
+}
 
 
 

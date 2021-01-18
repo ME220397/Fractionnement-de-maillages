@@ -1,4 +1,5 @@
 #include "mesh.h"
+#include "geometry.h"
 
 Mesh::Mesh(MyMesh mesh, QVector3D position)
 {
@@ -22,6 +23,18 @@ Mesh::Mesh(QVector<MyMesh::Point> points, QVector3D position){
     this->show_points = true;
     this->thick_edge = 1.0f;
     this->thick_point = 1.0f;
+    resetAllColorsAndThickness(&this->mesh);
+}
+
+Mesh::Mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces, QVector3D position){
+    // Build mesh
+    build_mesh(points, faces);
+    this->position = position;
+    this->show_points = true;
+    this->show_faces = true;
+    this->show_edges = true;
+    this->thick_point = 1.0f;
+    this->thick_edge = 1.0f;
     resetAllColorsAndThickness(&this->mesh);
 }
 
@@ -516,5 +529,51 @@ void Mesh::resetAllColorsAndThickness(MyMesh* _mesh)
     {
         _mesh->data(*curEdge).thickness = 1;
         _mesh->set_color(*curEdge, MyMesh::Color(0, 0, 0));
+    }
+}
+
+void Mesh::build_mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces){
+    // On ajoute les points au maillage
+    for(MyMesh::Point p : points)
+        mesh.add_vertex(p);
+
+    // Les faces de faces sont des quandrangles
+    // Nous allons donc creer des faces triangulaires et utiliser le determinant
+    // De trois points pour trouvé la bonne orientation de la face
+    for(QVector<int> face : faces){
+       // On recupère les id des points
+       int id0, id1, id2, id3;
+       id0 = face.at(0); id1 = face.at(1); id2 = face.at(2); id3 = face.at(3);
+
+       // On récupère les points sous formes de QVector3D
+       QVector3D p0, p1, p2, p3;
+       p0 = Geometry::to_Qvector3D(points.at(id0));
+       p1 = Geometry::to_Qvector3D(points.at(id1));
+       p2 = Geometry::to_Qvector3D(points.at(id2));
+       p3 = Geometry::to_Qvector3D(points.at(id3));
+
+       // On récupère la matrice de changement de base
+       MyMesh::Point p = points.at(id0);
+       MyMesh::Point u = points.at(id3) - p;
+       MyMesh::Point v = points.at(id1) - p;
+       QMatrix4x4 M = Geometry::change_of_base(p, u, v);
+
+       MyMesh::Point local_p0 = Geometry::to_point(M*p0);
+       MyMesh::Point local_p1 = Geometry::to_point(M*p1);
+       MyMesh::Point local_p2 = Geometry::to_point(M*p2);
+       MyMesh::Point local_p3 = Geometry::to_point(M*p3);
+
+       // On construit un premier triangle
+       int det = Geometry::determinant(local_p0, local_p1, local_p2);
+       if(det > 0)
+           mesh.add_face(mesh.vertex_handle(id0), mesh.vertex_handle(id1), mesh.vertex_handle(id2));
+       else
+           mesh.add_face(mesh.vertex_handle(id0), mesh.vertex_handle(id2), mesh.vertex_handle(id3));
+       // On construit le second
+       det = Geometry::determinant(local_p2, local_p3, local_p0);
+       if(det > 0)
+           mesh.add_face(mesh.vertex_handle(id2), mesh.vertex_handle(id3), mesh.vertex_handle(id0));
+       else
+           mesh.add_face(mesh.vertex_handle(id2), mesh.vertex_handle(id0), mesh.vertex_handle(id3));
     }
 }

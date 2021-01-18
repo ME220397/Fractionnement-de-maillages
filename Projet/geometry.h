@@ -16,6 +16,8 @@ public:
     Plane get_mediator_plan(MyMesh::Point A, MyMesh::Point B); //Recupere le plan mediateur du vecteur AB
     Line get_intersection_line(Plane p, Plane q); //Recupere la droite d'intersection de deux plans
 
+    static int determinant(MyMesh::Point A, MyMesh::Point B, MyMesh::Point P);
+    static QMatrix4x4 change_of_base(MyMesh::Point P, MyMesh::Point u_prime, MyMesh::Point v_prime);
     // Geometry on plane
     static bool intersected(Plane p1, Plane p2);
     static QVector3D to_Qvector3D(MyMesh::Point p);
