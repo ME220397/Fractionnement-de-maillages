@@ -232,7 +232,74 @@ Line Geometry::get_intersection_line(Plane p, Plane q)
 }
 
 
+MyMesh::Point Geometry::get_intersection_point(Line d1, Line d2)
+{
+    MyMesh::Point A; //Un point de la droite d1
+    A = d1.get_position();
+    MyMesh::Point U; // Vecteur directeur de la droite d1
+    U = d1.get_u();
+    //Notation pour simplifier la lecture du code
+    float a = A[0] ; float b = A[1] ; float c = A[2];
+    float u = U[0] ; float v = U[1] ; float w = U[2];
 
+    MyMesh::Point B; //Un point de la droite d2
+    B = d2.get_position();
+    MyMesh::Point V; //Vecteur de la droite d2
+    V = d2.get_u();
+    //Notation pour simplifier la lecture du code
+    float x = B[0] ; float y = B[1] ; float z = B[2];
+    float i = V[0] ; float j = V[1] ; float k = V[2];
+
+    if(A == B){ //Gestion du cas où les points A et B sont les mêmes
+        return A;
+    }
+
+    float alpha = 0; float beta = 0;
+
+    //Differents cas a verifier (on cherche alpha ou beta)
+    if(u == 0){
+
+        if(i == 0){
+
+            if(v == 0){
+
+                beta = (b - y)/j;
+            }
+            else{ // w ne peut pas etre egal a 0 sinon la droite d1 ne serait pas une droite
+                alpha = (z*j + b*k - y*k - c*j)/(j*w - v*k);
+            }
+        }
+        else{
+            beta = (a - x)/i;
+        }
+    }
+    else{
+        if(i == 0){
+            alpha = (x - a)/u;
+        }
+        else{
+            alpha = (a*j - x*j - b*j + y*i)/(v*i - u*j);
+        }
+    }
+
+    //qDebug() << alpha << beta << Qt::endl;
+
+    //Recuperation du point d'intersection
+    MyMesh::Point pt_inter;
+    if(alpha == 0)
+    {
+        pt_inter[0] = x + beta*i;
+        pt_inter[1] = y + beta*j;
+        pt_inter[2] = z + beta*k;
+    }
+    else{
+        pt_inter[0] = a + alpha*u;
+        pt_inter[1] = b + alpha*v;
+        pt_inter[2] = c + alpha*w;
+    }
+
+    return pt_inter;
+}
 
 
 
