@@ -16,8 +16,12 @@ public:
 
 signals:
     void mesh_loaded(MyMesh mesh);
+    void seeds_clicked(MyMesh *mesh, int nbSeeds);
+
 private slots:
     void on_pushButton_clicked();
+    void on_seeds_button_clicked();
+
 private:
     MyMesh mesh;
 };

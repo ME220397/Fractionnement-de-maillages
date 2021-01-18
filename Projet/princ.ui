@@ -28,6 +28,13 @@
            <number>0</number>
           </property>
           <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Charger Objet</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -48,9 +55,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="seeds_button">
             <property name="text">
-             <string>Charger Objet</string>
+             <string>Seeds</string>
             </property>
            </widget>
           </item>

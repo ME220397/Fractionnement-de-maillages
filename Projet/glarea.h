@@ -12,7 +12,9 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
+
 #include "mesh.h"
+#include "seedgenerator.h"
 
 class GLArea : public QOpenGLWidget,
                protected QOpenGLFunctions
@@ -23,10 +25,12 @@ public:
     explicit GLArea(QWidget *parent = nullptr);
     ~GLArea() override;
 
+
 protected slots:
     void onTimeout();
     void onMeshLoaded(MyMesh mesh);
     void on_vue_clicked();
+    void getSeeds(MyMesh *mesh, int nbSeeds);
 
 protected:
     void initializeGL() override;
