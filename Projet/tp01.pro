@@ -29,6 +29,10 @@ unix:!macx {
 }
 
 macx: {
+    PKG_CONFIG = /usr/local/bin/pkg-config
+    QT_CONFIG -= no-pkg-config
+    CONFIG += link_pkgconfig
+    PKGCONFIG += bullet
     INCLUDEPATH += $$PWD/../OpenMesh/inc/
     LIBS += -L$$PWD/../OpenMesh/libosx/ -lOpenMeshCore -lOpenMeshTools
 }
