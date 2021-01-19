@@ -1,6 +1,7 @@
 #include "mesh.h"
 #include "geometry.h"
 
+
 Mesh::Mesh(MyMesh mesh, QVector3D position)
 {
     this->mesh = mesh;
@@ -65,10 +66,18 @@ void Mesh::set_positionZ(float z){
     position[2] = z;
 }
 
+void Mesh::set_numObj(int i){
+    num_obj = i;
+}
+
 // Getters
 
 QVector3D Mesh::get_position(){
     return position;
+}
+
+int Mesh::get_numObj(){
+    return num_obj;
 }
 
 // Fonctions pour changer la couleur
@@ -351,6 +360,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         QMatrix4x4 modelFaceMatrix;
         modelFaceMatrix.translate(position);
 
+
         program->setUniformValue("projectionMatrix", projectionMatrix);
         program->setUniformValue("viewMatrix", viewMatrix);
         program->setUniformValue("modelMatrix", modelFaceMatrix);
@@ -375,6 +385,7 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
         program->bind();
         QMatrix4x4 modelVertMatrix;
         modelVertMatrix.translate(position);
+
 
         program->setUniformValue("projectionMatrix", projectionMatrix);
         program->setUniformValue("viewMatrix", viewMatrix);
@@ -563,9 +574,35 @@ void Mesh::build_mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces
        id0 = face.at(0); id1 = face.at(1); id2 = face.at(2);
 
        // Trouvé un moyen de creer le Mesh
-    }   
+    }
 }
 
 MyMesh Mesh::get_mesh(){
     return mesh;
 }
+
+void Mesh::anime(btDiscreteDynamicsWorld *dynamicWorld){
+    dynamicWorld->stepSimulation(1.f / 60.f, 10);
+
+    btCollisionObject* obj = dynamicWorld->getCollisionObjectArray()[this->num_obj];
+    btRigidBody* body = btRigidBody::upcast(obj);
+    btTransform trans;
+    if(body && body->getMotionState()){
+        body->getMotionState()->getWorldTransform(trans);
+    }
+    else {
+        trans = obj->getWorldTransform();
+    }
+
+    position.setX(trans.getOrigin().getX());
+    position.setY(trans.getOrigin().getY());
+    position.setZ(trans.getOrigin().getZ());
+
+}
+
+
+
+
+
+
+

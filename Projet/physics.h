@@ -5,12 +5,6 @@
 #include "boite.h"
 #include "mesh.h"
 
-struct MyShape {
-    Mesh mesh;
-    btCollisionShape* shape;
-    int num_shape;
-};
-
 class Physics
 {
 public:
@@ -18,11 +12,12 @@ public:
     void init_sim();
     void createSol(Boite *sol);
     void createConvex(Mesh *mesh);
-    void anim();
+    void delete_sim();
+    btDiscreteDynamicsWorld* get_world();
 
     //keep track of the shapes, we release memory at exit.
     //make sure to re-use collision shapes among rigid bodies whenever possible!
-    btAlignedObjectArray<MyShape> collisionShapes;
+    btAlignedObjectArray<btCollisionShape*> collisionShapes;
 
 private:
     int nb_dynamic_obj = 0;

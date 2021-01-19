@@ -62,12 +62,14 @@ private:
     QOpenGLShaderProgram *program_mesh;
     QOpenGLBuffer vbo_sol;
     QOpenGLBuffer vbo_particule;
-    QOpenGLTexture *textures[2];
+    QOpenGLTexture *texture[1];
+
 
     void makeGLObjects();
     void tearGLObjects();
 
     vector<Mesh> meshes;
+    vector<Mesh> printableMesh;
 
     bool face_mode;
 };

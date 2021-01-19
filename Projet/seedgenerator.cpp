@@ -79,6 +79,7 @@ void SeedGenerator::generateRand(){
             }
 
             if(!present) generatedPoints.push_back(newPoint);
+            else i--; // !!!
         } else generatedPoints.push_back(newPoint);
     }
 }

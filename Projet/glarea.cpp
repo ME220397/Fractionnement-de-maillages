@@ -43,7 +43,7 @@ GLArea::GLArea(QWidget *parent) :
     timer = new QTimer(this);
     timer->setInterval(50);           // msec
     connect (timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
-    timer->start();
+//    timer->start();
     elapsedTimer.start();
 
 
@@ -82,12 +82,13 @@ void GLArea::initializeGL()
     }
 
     program_sol = new QOpenGLShaderProgram(this);
-    program_sol->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/simple.vsh");
-    program_sol->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/simple.fsh");
-    if (! program_sol->link()) {  // édition de lien des shaders dans le shader program
-       qWarning("Failed to compile and link shader program:");
-       qWarning() << program_sol->log();
-    }
+        program_sol->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/simple.vsh");
+        program_sol->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/simple.fsh");
+        if (! program_sol->link()) {  // édition de lien des shaders dans le shader program
+            qWarning("Failed to compile and link shader program:");
+            qWarning() << program_sol->log();
+        }
+    program_sol->setUniformValue("texture", 0);
 }
 
 
@@ -95,6 +96,7 @@ void GLArea::makeGLObjects()
 {
     for(Mesh p : meshes){
         p.load_data();
+//        physics->createConvex(&p);
     }
 
     // Création du sol
@@ -104,6 +106,12 @@ void GLArea::makeGLObjects()
     vbo_sol.create();
     vbo_sol.bind();
     vbo_sol.allocate(sol->boite_data.constData(), sol->boite_data.count() * int(sizeof(GLfloat)));
+
+    // Création de textures
+    QImage image_sol(":/textures/ground.jpg");
+    if (image_sol.isNull())
+        qDebug() << "load image ground.jpg failed";
+    texture[0] = new QOpenGLTexture(image_sol);
 
 }
 
@@ -115,6 +123,8 @@ void GLArea::tearGLObjects()
     }
 
     vbo_sol.destroy();
+    physics->delete_sim();
+    delete texture[1];
 }
 
 
@@ -139,7 +149,8 @@ void GLArea::paintGL()
     viewMatrix.rotate(yRot, 0, 1, 0);
     viewMatrix.rotate(zRot, 0, 0, 1);
 
-    for(Mesh p : meshes){
+
+    for(Mesh p : printableMesh){
         p.draw(projectionMatrix, viewMatrix, program_mesh);
     }
 
@@ -154,12 +165,14 @@ void GLArea::paintGL()
     program_sol->setUniformValue("viewMatrix", viewMatrix);
     program_sol->setUniformValue("modelMatrix", modelMatrixSol);
 
-    program_sol->setAttributeBuffer("in_position", GL_FLOAT, 0, 3, 6 * sizeof(GLfloat));
-    program_sol->setAttributeBuffer("in_uv", GL_FLOAT, 3 * sizeof(GLfloat), 3, 6 * sizeof(GLfloat));
+    program_sol->setAttributeBuffer("in_position", GL_FLOAT, 0, 3, 5 * sizeof(GLfloat));
+    program_sol->setAttributeBuffer("in_uv", GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
     program_sol->enableAttributeArray("in_position");
     program_sol->enableAttributeArray("in_uv");
 
+    texture[0]->bind();
     glDrawArrays(GL_TRIANGLES, 0, 6);
+    texture[0]->release();
 
     program_sol->disableAttributeArray("in_position");
     program_sol->disableAttributeArray("in_uv");
@@ -200,6 +213,11 @@ void GLArea::keyPressEvent(QKeyEvent *ev)
         case Qt::Key_D :
             zRot += da;
             update();
+            break;
+
+        case Qt::Key_T :
+            if(timer->isActive()) timer->stop();
+            else timer->start();
             break;
     }
 }
@@ -253,7 +271,10 @@ void GLArea::onTimeout()
     dt = (chrono - old_chrono) / 1000.0f;
     old_chrono = chrono;
 
-
+    sol->anime(physics->get_world());
+    for(Mesh &mesh : printableMesh){
+        mesh.anime(physics->get_world());
+    }
 
     update();
 }
@@ -273,10 +294,12 @@ void GLArea::onMeshLoaded(MyMesh mesh){
     Mesh bbox(box, pos);
     bbox.color_all_edges(255, 0, 0);
     bbox.color_all_points(0, 0, 255);
-    bbox.set_thickness_all_edges(1.0f);
+    bbox.set_thickness_all_edges(10.0f);
     bbox.set_thickness_all_points(2.f);
     bbox.load_data();
     bbox.set_faces_visible(false);
+    physics->createConvex(&newMesh);
+    printableMesh.push_back(newMesh);
     meshes.push_back(newMesh);
     meshes.push_back(bbox);
 }
