@@ -274,7 +274,7 @@ void GLArea::onTimeout()
     sol->anime(physics->get_world());
     for(Mesh &mesh : printableMesh){
         mesh.anime(physics->get_world());
-        if(mesh.get_position()[1] <= -3.9 && !voroDone){
+        if(mesh.get_position()[1] <= -3.9 && (voroDone == false)){
             voroDone = true;
             createVoronoi(mesh);
         }

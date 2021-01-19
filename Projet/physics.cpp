@@ -82,13 +82,14 @@ void Physics::createConvex(Mesh *mesh){
             dynamicsWorld->addRigidBody(firstBody);
             first = false;
         } else {
-            dynamicsWorld->removeRigidBody(firstBody);
-            nb_dynamic_obj--;
-
+            if(!deleted){
+                dynamicsWorld->removeRigidBody(firstBody);
+                deleted = true;
+            }
             btRigidBody *body = new btRigidBody(rbInfo);
             dynamicsWorld->addRigidBody(body);
+            nb_dynamic_obj++;
         }
-        nb_dynamic_obj++; //Surement a debug !!!
     }
 }
 

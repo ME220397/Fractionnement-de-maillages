@@ -33,6 +33,7 @@ private:
     btDiscreteDynamicsWorld* dynamicsWorld;
 
     bool first = true;
+    bool deleted = false;
     btRigidBody* firstBody;
 };
 
