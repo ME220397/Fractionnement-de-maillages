@@ -15,6 +15,8 @@
 
 #include "mesh.h"
 #include "seedgenerator.h"
+#include "boite.h"
+#include "physics.h"
 
 class GLArea : public QOpenGLWidget,
                protected QOpenGLFunctions
@@ -53,6 +55,9 @@ private:
     float windowRatio = 1.0f;
     QPoint lastPos;
 
+    Physics *physics;
+    Boite *sol;
+
     QOpenGLShaderProgram *program_sol;
     QOpenGLShaderProgram *program_mesh;
     QOpenGLBuffer vbo_sol;
@@ -63,6 +68,7 @@ private:
     void tearGLObjects();
 
     vector<Mesh> meshes;
+
     bool face_mode;
 };
 

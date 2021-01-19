@@ -65,11 +65,21 @@ void SeedGenerator::generateRand(){
     std::uniform_real_distribution<> distrZ(min_coord[2], max_coord[2]);
 
     for(int i = 0; i < nbPoints; ++i){
+        bool present = false;
         float x = distrX(eng);
         float y = distrY(eng);
         float z = distrZ(eng);
         MyMesh::Point newPoint(x, y ,z);
-        generatedPoints.push_back(newPoint);
+        if(generatedPoints.size() != 0){
+            for(MyMesh::Point p : generatedPoints){
+                if(x == p[0] && y == p[1] && z == p[2]){
+                    qDebug() << "Point identique a un déjà existant.";
+                    present = true;
+                }
+            }
+
+            if(!present) generatedPoints.push_back(newPoint);
+        } else generatedPoints.push_back(newPoint);
     }
 }
 

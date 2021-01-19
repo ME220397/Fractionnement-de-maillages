@@ -8,6 +8,7 @@ QT       += core gui
 QT       += opengl
 
 CONFIG += c++14
+CONFIG += link_pkgconfig
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,6 +19,7 @@ TARGET = tp01
 TEMPLATE = app
 
 unix:!macx {
+    PKGCONFIG += bullet
     LIBS += -lglut -lGLU
     LIBS += -L$$PWD/../OpenMesh/liblinux/ -lOpenMeshCore
 
@@ -32,16 +34,20 @@ macx: {
 }
 
 SOURCES += main.cpp\
-	line.cpp \
-	mesh.cpp \
-	geometry.cpp \
-	plane.cpp \
-	princ.cpp \
-	glarea.cpp \
-	seedgenerator.cpp
+        boite.cpp \
+        mesh.cpp \
+        physics.cpp \
+        princ.cpp \
+        glarea.cpp \
+        seedgenerator.cpp \
+		geometry.cpp \
+		line.cpp \
+		plane.cpp 
 
 HEADERS  += princ.h \
+	boite.h \
 	glarea.h \
+	physics.h \
 	line.h \
 	plane.h \
 	seedgenerator.h \

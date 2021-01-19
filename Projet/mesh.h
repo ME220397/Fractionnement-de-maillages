@@ -15,6 +15,7 @@ public:
     Mesh(MyMesh mesh, QVector3D position);
     Mesh(QVector<MyMesh::Point> points, QVector3D position);
     Mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces, QVector3D position);
+    Mesh();
 
     MyMesh compute_bounding_box();
     QVector3D compute_barycentre();
@@ -24,6 +25,12 @@ public:
     void set_faces_visible(bool s);
     void set_edges_visible(bool s);
     void set_vertices_visible(bool s);
+    void set_positionX(float x);
+    void set_positionY(float y);
+    void set_positionZ(float z);
+
+    // Getters
+    QVector3D get_position();
 
     // Changer la couleur
     void color_point_by_id(int id, int r, int g, int b);
