@@ -23,6 +23,8 @@ void test_get_planes(Mesh mesh)
         qDebug() << "pos :" << Geometry::to_Qvector3D(p.get_position());
         qDebug() << "vec1 :" << Geometry::to_Qvector3D(p.get_u()) << "vec2 :" << Geometry::to_Qvector3D(p.get_v());
     }
+
+    qDebug() << "number of planes : " << planes.size();
 }
 
 void test_get_mediator_planes(Mesh mesh)
@@ -45,8 +47,8 @@ void Princ::on_pushButton_clicked()
         mesh_loaded(mesh);
     }
     Mesh _mesh(mesh,QVector3D(0,0,0));
-    //test_get_planes(_mesh);
-    test_get_mediator_planes(_mesh);
+    test_get_planes(_mesh);
+    //test_get_mediator_planes(_mesh);
 }
 
 
