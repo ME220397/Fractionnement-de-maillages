@@ -9,6 +9,8 @@
 #include<QMatrix4x4>
 #include<iostream>
 
+#include "btBulletDynamicsCommon.h"
+
 class Mesh
 {
 public:
@@ -28,12 +30,13 @@ public:
     void set_positionX(float x);
     void set_positionY(float y);
     void set_positionZ(float z);
+    void set_numObj(int i);
 
     // Getters
     QVector3D get_position();
     MyMesh::Point get_min_bbox();
     MyMesh::Point get_max_bbox();
-
+    int get_numObj();
     // Changer la couleur
     void color_point_by_id(int id, int r, int g, int b);
     void color_point(VertexHandle vh, int r, int g, int b);
@@ -59,6 +62,7 @@ public:
     void destroy_vbos();
     void load_data();
     void draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShaderProgram * program);
+    void anime(btDiscreteDynamicsWorld *dynamicWorld);
 
     MyMesh get_mesh();
 
@@ -84,8 +88,12 @@ private:
     float thick_edge;
     float thick_point;
 
+<<<<<<< HEAD
     MyMesh::Point min;
     MyMesh::Point max;
+=======
+    int num_obj;
+>>>>>>> b-thomas
 };
 
 #endif // MESH_H

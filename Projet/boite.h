@@ -12,6 +12,7 @@ class Boite
 public:
     Boite(QVector3D position, float cote, int num_cube, int index_debut_vbo);
     Boite(QVector3D position, float cote, int num_cube, int index_debut_vbo, float r, float g, float b);
+    Boite();
     void create_boite();
     void create_sol();
     void anime(btDiscreteDynamicsWorld* dynamicWorld);

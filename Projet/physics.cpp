@@ -5,6 +5,7 @@ Physics::Physics()
     init_sim();
 }
 
+// Initialisation du monde physique.
 void Physics::init_sim(){
     collisionConfiguration = new btDefaultCollisionConfiguration();
     dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -15,83 +16,110 @@ void Physics::init_sim(){
     qDebug() << "Initialisation de Physics";
 }
 
+btDiscreteDynamicsWorld* Physics::get_world(){
+    return dynamicsWorld;
+}
+
+// Permet de créer l'enveloppe physique du sol.
 void Physics::createSol(Boite *sol){
-    //Creation du corps du sol
     {
-        struct MyShape groundshape;
-        groundshape.shape = new btBoxShape(btVector3(btScalar(sol->cote/2), btScalar(sol->cote/2), btScalar(sol->cote/2)));
-        groundshape.num_shape = nb_dynamic_obj;
+        btCollisionShape* groundshape = new btBoxShape(btVector3(btScalar(sol->cote/2), btScalar(sol->cote/2), btScalar(sol->cote/2)));
+        sol->numObj = nb_dynamic_obj;
         nb_dynamic_obj++;
         collisionShapes.push_back(groundshape);
 
         btTransform groundTransform;
         groundTransform.setIdentity();
-        groundTransform.setOrigin(btVector3(0, 0, 0));
+        groundTransform.setOrigin(btVector3(sol->position[0], sol->position[1], sol->position[2]));
 
         btScalar mass(0.);
 
         bool isDynamic = (mass != 0.f);
 
         btVector3 localInertia(0,0,0);
-        if (isDynamic) groundshape.shape->calculateLocalInertia(mass, localInertia);
+        if (isDynamic) groundshape->calculateLocalInertia(mass, localInertia);
 
         btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundshape.shape, localInertia);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundshape, localInertia);
         btRigidBody* body = new btRigidBody(rbInfo);
 
         dynamicsWorld->addRigidBody(body);
     }
 }
 
+// Permet de créer l'enveloppe physique autour d'un mesh convexe pour gérer les collisions.
 void Physics::createConvex(Mesh *mesh){
     {
-        struct MyShape convexShape;
+        btConvexHullShape* convexShape = new btConvexHullShape();
 
-        convexShape.shape = new btConvexHullShape();
+        MyMesh _mymesh = mesh->get_mesh();
+        for(MyMesh::VertexIter v_it = _mymesh.vertices_begin(); v_it != _mymesh.vertices_end(); v_it++){
+            VertexHandle current_vertex = *v_it;
+            btVector3 point(btScalar(_mymesh.point(current_vertex)[0]), btScalar(_mymesh.point(current_vertex)[1]), btScalar(_mymesh.point(current_vertex)[2]));
+            convexShape->addPoint(point);
+        }
+
         collisionShapes.push_back(convexShape);
-        convexShape.num_shape = nb_dynamic_obj;
+        mesh->set_numObj(nb_dynamic_obj);
         nb_dynamic_obj++;
-        //Parcourir tous les points du mesh --> btVector3
-        //Et ensuite ajouter le point avec convexShape.addPoint(btVector);
 
         btTransform convexTransform;
         convexTransform.setIdentity();
         convexTransform.setOrigin(btVector3(mesh->get_position()[0], mesh->get_position()[1], mesh->get_position()[2]));
 
-        btScalar mass(.5);
+        btScalar mass(1.f);
 
         bool isDynamic = (mass != 0.f);
 
         btVector3 localInertia(0,0,0);
-        if (isDynamic) convexShape.shape->calculateLocalInertia(mass, localInertia);
+        if (isDynamic) convexShape->calculateLocalInertia(mass, localInertia);
 
         btDefaultMotionState* myMotionState = new btDefaultMotionState(convexTransform);
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, convexShape.shape, localInertia);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, convexShape, localInertia);
         btRigidBody* body = new btRigidBody(rbInfo);
+        body->setLinearVelocity(btVector3(-30, 0, -30));
 
         dynamicsWorld->addRigidBody(body);
         nb_dynamic_obj++;
     }
 }
 
-void Physics::anim(){
-    dynamicsWorld->stepSimulation(1.f / 60.f, 10);
+// Detruit le monde physique.
+void Physics::delete_sim(){
+    for (int i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+        {
+            btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
+            btRigidBody* body = btRigidBody::upcast(obj);
+            if (body && body->getMotionState())
+            {
+                delete body->getMotionState();
+            }
+            dynamicsWorld->removeCollisionObject(obj);
+            delete obj;
+        }
 
-    for(int i = 0; i < nb_dynamic_obj; i++){
-        btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
-        btRigidBody* body = btRigidBody::upcast(obj);
-        btTransform trans;
-        if(body && body->getMotionState()){
-            body->getMotionState()->getWorldTransform(trans);
+        //delete collision shapes
+        for (int j = 0; j < collisionShapes.size(); j++)
+        {
+            btCollisionShape* shape = collisionShapes[j];
+            collisionShapes[j] = 0;
+            delete shape;
         }
-        else {
-            trans = obj->getWorldTransform();
-        }
-        //Attention le sol n'est pas un mesh.
-        collisionShapes[i].mesh.set_positionX(trans.getOrigin().getX());
-        collisionShapes[i].mesh.set_positionY(trans.getOrigin().getY());
-        collisionShapes[i].mesh.set_positionZ(trans.getOrigin().getZ());
-    }
+
+        //delete dynamics world
+        delete dynamicsWorld;
+
+        //delete solver
+        delete solver;
+
+        //delete broadphase
+        delete overlappingPairCache;
+
+        //delete dispatcher
+        delete dispatcher;
+
+        delete collisionConfiguration;
+
+        //next line is optional: it will be cleared by the destructor when the array goes out of scope
+        collisionShapes.clear();
 }
-
-
