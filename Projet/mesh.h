@@ -58,6 +58,8 @@ public:
     void load_data();
     void draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShaderProgram * program);
 
+    MyMesh get_mesh();
+
 private:
 
     void build_mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces);

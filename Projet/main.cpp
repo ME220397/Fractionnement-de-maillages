@@ -172,6 +172,21 @@ void test_get_intersection_line()
     qDebug() << d.get_u()[0] << d.get_u()[1] << d.get_u()[2] << Qt::endl;
 }
 
+void test_get_intersection_point(){
+    Geometry g;
+
+    MyMesh::Point A(2,0,2);
+    MyMesh::Point u(1,0,1);
+    Line d1(A, u);
+
+    MyMesh::Point B(2,2,2);
+    MyMesh::Point v(1,1,1);
+    Line d2(B, v);
+
+    MyMesh::Point pt_inter = g.get_intersection_point(d1, d2);
+    qDebug() << pt_inter[0] << pt_inter[1] << pt_inter[2] << Qt::endl;
+}
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -182,5 +197,6 @@ int main(int argc, char *argv[])
     //test_plane_intersection();
     //test_get_mediator_plan();
     //test_get_intersection_line();
+    //test_get_intersection_point();
     return a.exec();
 }

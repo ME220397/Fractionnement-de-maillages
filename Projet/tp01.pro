@@ -34,15 +34,16 @@ macx: {
 }
 
 SOURCES += main.cpp\
-        boite.cpp \
+	boite.cpp \
         mesh.cpp \
         physics.cpp \
         princ.cpp \
         glarea.cpp \
         seedgenerator.cpp \
-		geometry.cpp \
-		line.cpp \
-		plane.cpp 
+	geometry.cpp \
+	line.cpp \
+	plane.cpp \
+	voronoi.cpp
 
 HEADERS  += princ.h \
 	boite.h \
@@ -55,7 +56,8 @@ HEADERS  += princ.h \
 	glarea.h \
 	mesh.h \
 	geometry.h \
-	glarea.h
+	glarea.h \
+	voronoi.h
 
 FORMS    += princ.ui
 

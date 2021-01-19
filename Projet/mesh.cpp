@@ -563,5 +563,9 @@ void Mesh::build_mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces
        id0 = face.at(0); id1 = face.at(1); id2 = face.at(2);
 
        // Trouvé un moyen de creer le Mesh
-    }
+    }   
+}
+
+MyMesh Mesh::get_mesh(){
+    return mesh;
 }
