@@ -8,7 +8,7 @@ Voronoi::Voronoi(QVector<MyMesh::Point> points, MyMesh mesh)
 
 QVector<Plane> Voronoi::get_mediator_planes(MyMesh::Point p, Mesh mesh)
 {
-    MyMesh mymesh = mesh.get_mesh();//
+    MyMesh mymesh = mesh.get_mesh();
     MyMesh *_mesh = &mymesh;
     QVector<Plane> planes;
     for(MyMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); v_it++){
@@ -36,11 +36,42 @@ QVector<Line> Voronoi::get_intersection_Line_mesh_plane(Plane p, QVector<Plane> 
     return inter_line;
 }
 
-QVector<Mesh> Voronoi::compute_voronoi()
+QVector<MyMesh::Point> Voronoi::get_points(QVector<Line> lines){
+    QVector<MyMesh::Point> points;
+    points.append(Geometry::get_intersection_point(lines[0], lines[1]));
+    points.append(Geometry::get_intersection_point(lines[1], lines[2]));
+    points.append(Geometry::get_intersection_point(lines[2], lines[0]));
+    return points;
+}
+
+QVector<Mesh> Voronoi::compute_voronoi(Mesh mesh, QVector<MyMesh::Point> points)
 {
     //Recuperer les plans du mesh
+    QVector<Plane> planes = Geometry::get_planes(mesh);
     //Pour chaque point du nuage recuperer les plan mediateur avec les points du mesh qui le contient
-    //intersection des plans et des droites obtenues
+    MyMesh mymesh = mesh.get_mesh();
+    MyMesh *_mesh = &mymesh;
+    QVector<Plane> med_planes;
+
+    for(MyMesh::Point p:points){
+        for(MyMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); v_it++){
+            med_planes.append(Geometry::get_mediator_plan(p, _mesh->point(*v_it)));
+        }
+    }
+    //intersection des plans obtenues
+
+    QVector<QVector<Line>> lines;
+    QVector<Line> line;
+    for(Plane q:med_planes){
+        line.append(get_intersection_Line_mesh_plane(q, planes, mesh.get_min_bbox(), mesh.get_max_bbox()));
+        lines.append(line);
+    }
+
+    //Intersection des droites
+    QVector<QVector<MyMesh::Point>> inter_points;
+    for(QVector<Line> l:lines){
+        inter_points.append(get_points(l));
+    }
     //creation de nouveaux mesh dans un QVector<Mesh>
 
 }

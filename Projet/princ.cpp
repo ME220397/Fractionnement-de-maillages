@@ -65,8 +65,8 @@ void Princ::on_pushButton_clicked()
     Mesh _mesh(mesh,QVector3D(0,0,0));
 
     //test_get_planes(_mesh);
-    test_get_mediator_planes(_mesh);
-    //test_get_intersection_Line_mesh_plane(_mesh);
+    //test_get_mediator_planes(_mesh);
+    test_get_intersection_Line_mesh_plane(_mesh);
     //test_get_mediator_planes(_mesh);
 
 }
