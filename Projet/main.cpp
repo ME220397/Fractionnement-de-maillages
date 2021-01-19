@@ -5,6 +5,98 @@
 #include "geometry.h"
 #include "plane.h"
 #include <QApplication>
+#include <QVector>
+
+void test_line_intersection(){
+    Line l1(MyMesh::Point(0, 0, 0), MyMesh::Point(1, 0, 0));
+    Line l2(MyMesh::Point(0, -10, 0), MyMesh::Point(0,1,0));
+
+    bool intersected = Geometry::intersected(l1, l2);
+    assert(intersected);
+
+    Line l3(MyMesh::Point(0, 0, 0), MyMesh::Point(1, 0, 0));
+    Line l4(MyMesh::Point(0, -10, 0), MyMesh::Point(-1, 0, 0));
+
+    intersected = Geometry::intersected(l3, l4);
+    assert(!intersected);
+
+    Line l5(MyMesh::Point(0, 0, 0), MyMesh::Point(0, 1, 1));
+    Line l6(MyMesh::Point(0, 1, 0), MyMesh::Point(0,2,2));
+
+    intersected = Geometry::intersected(l5, l6);
+    assert(!intersected);
+
+    Line l7(MyMesh::Point(1, 1, 0), MyMesh::Point(2, 2, 0));
+    Line l8(MyMesh::Point(4, 2, 0), MyMesh::Point(-3,0,0));
+
+    intersected = Geometry::intersected(l7, l8);
+    assert(intersected);
+
+    Line l9(MyMesh::Point(2, 2, 2), MyMesh::Point(1, 1, 1));
+    Line l10(MyMesh::Point(0, 2, 0), MyMesh::Point(0,1,2));
+
+    intersected = Geometry::intersected(l9, l10);
+    assert(intersected);
+}
+void test_mesh_creation(){
+   QVector<MyMesh::Point> points;
+   QVector<QVector<int>> faces;
+
+   // On créer les points
+   points.append(MyMesh::Point(-1,-1,-1));
+   points.append(MyMesh::Point(1,-1,-1));
+   points.append(MyMesh::Point(1,1,-1));
+   points.append(MyMesh::Point(-1,1,-1));
+   points.append(MyMesh::Point(1,1,1));
+   points.append(MyMesh::Point(1,-1,1));
+   points.append(MyMesh::Point(-1,-1,1));
+   points.append(MyMesh::Point(-1,1,1));
+
+   // on créer les faces
+   QVector<int> face0;
+   face0.append(0);
+   face0.append(1);
+   face0.append(2);
+   face0.append(3);
+   faces.append(face0);
+
+   QVector<int> face1;
+   face1.append(1);
+   face1.append(2);
+   face1.append(4);
+   face1.append(5);
+   faces.append(face1);
+
+   QVector<int> face2;
+   face2.append(5);
+   face2.append(4);
+   face2.append(7);
+   face2.append(6);
+   faces.append(face2);
+
+   QVector<int> face3;
+   face3.append(6);
+   face3.append(7);
+   face3.append(3);
+   face3.append(0);
+   faces.append(face3);
+
+   QVector<int> face4;
+   face4.append(2);
+   face4.append(3);
+   face4.append(7);
+   face4.append(4);
+   faces.append(face4);
+
+   QVector<int> face5;
+   face5.append(1);
+   face5.append(5);
+   face5.append(6);
+   face5.append(0);
+   faces.append(face5);
+
+   Mesh mesh(points, faces, QVector3D(0,0,0));
+}
 
 void test_plane_intersection(){
     Plane p1 = Plane(
@@ -85,7 +177,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     Princ w;
     w.show();
-
+    test_line_intersection();
+    //test_mesh_creation();
     //test_plane_intersection();
     //test_get_mediator_plan();
     //test_get_intersection_line();

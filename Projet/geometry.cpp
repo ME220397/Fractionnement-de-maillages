@@ -273,7 +273,28 @@ int Geometry::determinant(MyMesh::Point A, MyMesh::Point B, MyMesh::Point P){
     return det;
 }
 
+bool Geometry::intersected(Line l1, Line l2){
+    MyMesh::Point p = l1.get_position();
+    MyMesh::Point u = l1.get_u();
+    MyMesh::Point v = l2.get_u();
 
+    QMatrix4x4 M = Geometry::change_of_base(p, u ,v);
+
+    MyMesh::Point local_p = Geometry::to_point(M * Geometry::to_Qvector3D(p));
+    MyMesh::Point local_u = Geometry::to_point(M * Geometry::to_Qvector3D(u));
+    MyMesh::Point local_v = Geometry::to_point(M * Geometry::to_Qvector3D(v));
+
+    MyMesh::Point q0 = local_p + local_u;
+    MyMesh::Point q1 = local_p + local_v;
+
+    int det = Geometry::determinant(local_p, q0, q1);
+
+    if(det != 0){
+        return true;
+    }
+
+    return false;
+}
 
 
 
