@@ -152,6 +152,10 @@ void GLArea::paintGL()
 
     for(Mesh p : printableMesh){
         p.draw(projectionMatrix, viewMatrix, program_mesh);
+        if(p.get_position()[1] <= -3.9 && !voroDone){
+            voroDone = true;
+            Voronoi voronoi(generatedSeeds, p.get_mesh());
+        }
     }
 
     // Affichage du sol
@@ -325,8 +329,8 @@ void GLArea::getSeeds(MyMesh *mesh, int nbSeeds){
     SeedGenerator seeds(mesh, nbSeeds);
     seeds.generateRand();
 //    seeds.generateEquidistant();
-    QVector<MyMesh::Point> points = seeds.get_points();
-    Mesh seedsMesh(points, QVector3D(0.0f, 0.0f, 0.0f));
+    generatedSeeds = seeds.get_points();
+    Mesh seedsMesh(generatedSeeds, QVector3D(0.0f, 0.0f, 0.0f));
     seedsMesh.set_thickness_all_points(15.f);
     seedsMesh.color_all_points(255, 0, 0);
     seedsMesh.load_data();

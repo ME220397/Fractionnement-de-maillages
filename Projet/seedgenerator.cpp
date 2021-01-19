@@ -128,3 +128,13 @@ void SeedGenerator::generateEquidistant(){
         }
     }
 }
+
+QVector<MyMesh::Point> SeedGenerator::getBary(){
+    MyMesh::Point max_coord = get_maxCoords();
+    MyMesh::Point min_coord = get_minCoords();
+
+    QVector<MyMesh::Point> bary;
+    bary.push_back((min_coord + max_coord)/2);
+
+    return bary;
+}

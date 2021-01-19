@@ -17,6 +17,7 @@
 #include "seedgenerator.h"
 #include "boite.h"
 #include "physics.h"
+#include "voronoi.h"
 
 class GLArea : public QOpenGLWidget,
                protected QOpenGLFunctions
@@ -72,6 +73,10 @@ private:
     vector<Mesh> printableMesh;
 
     bool face_mode;
+
+    QVector<MyMesh::Point> generatedSeeds;
+
+    bool voroDone = false;
 };
 
 #endif // GLAREA_H
