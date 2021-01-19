@@ -646,9 +646,10 @@ void Mesh::anime(btDiscreteDynamicsWorld *dynamicWorld){
 
 }
 
+MyMesh::Point Mesh::get_min_bbox(){
+    return min;
+}
 
-
-
-
-
-
+MyMesh::Point Mesh::get_max_bbox(){
+    return max;
+}

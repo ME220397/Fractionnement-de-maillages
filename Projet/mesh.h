@@ -87,13 +87,9 @@ private:
 
     float thick_edge;
     float thick_point;
-
-<<<<<<< HEAD
     MyMesh::Point min;
     MyMesh::Point max;
-=======
     int num_obj;
->>>>>>> b-thomas
 };
 
 #endif // MESH_H
