@@ -367,29 +367,30 @@ MyMesh::Point Geometry::get_intersection_point(Line d1, Line d2)
 }
 
 
-QVector<Plane> Geometry::get_planes(Mesh mesh){
+QVector<Plane> Geometry::get_planes(Mesh mesh){ //Recupere les plans correspondants aux faces des mesh
     MyMesh mymesh = mesh.get_mesh();
     MyMesh *_mesh = &mymesh;
-    MyMesh::Point barycentre(0,0,0);
+    MyMesh::Point barycentre(0,0,0); //Initialisation
     MyMesh::Point A;
     MyMesh::Point B;
     QVector<Plane> planes;
     Plane P(barycentre,barycentre,barycentre);
 
+    //Calcul du barycentre
     for(MyMesh::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); f_it++){
         for(MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it){
             barycentre += _mesh->point(*fv_it);
         }
         barycentre /= 3;
 
-
+        //Calcul de deux points du mesh
         MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*f_it);
         A = _mesh->point(*fv_it);
         fv_it++;
         B = _mesh->point(*fv_it);
-        P = Plane(barycentre, get_vect(barycentre, A), get_vect(barycentre, B));
+        P = Plane(barycentre, get_vect(barycentre, A), get_vect(barycentre, B)); //Recuperation du  plan en prenant un point et deux vecteurs directeurs
         planes.append(P);
-        barycentre = MyMesh::Point(0,0,0);
+        barycentre = MyMesh::Point(0,0,0); //Remise a 0
     }
     return planes;
 }

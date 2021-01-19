@@ -11,7 +11,8 @@ class Voronoi
 {
 public:
     Voronoi(QVector<MyMesh::Point> points, MyMesh mesh);
-    QVector<Plane> get_mediator_planes(MyMesh::Point p, Mesh mesh);
+    static QVector<Plane> get_mediator_planes(MyMesh::Point p, Mesh mesh);
+    static QVector<Line> get_intersection_Line_mesh_plane(Plane p, QVector<Plane>);
     QVector<Mesh> compute_voronoi();
 
 private:
