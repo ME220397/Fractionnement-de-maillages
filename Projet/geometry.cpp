@@ -381,12 +381,15 @@ QVector<Plane> Geometry::get_planes(Mesh mesh){
             barycentre += _mesh->point(*fv_it);
         }
         barycentre /= 3;
+
+
         MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*f_it);
         A = _mesh->point(*fv_it);
         fv_it++;
         B = _mesh->point(*fv_it);
         P = Plane(barycentre, get_vect(barycentre, A), get_vect(barycentre, B));
         planes.append(P);
+        barycentre = MyMesh::Point(0,0,0);
     }
     return planes;
 }

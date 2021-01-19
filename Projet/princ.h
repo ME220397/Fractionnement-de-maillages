@@ -6,6 +6,7 @@
 
 #include "ui_princ.h"
 #include "MeshFormat.h"
+#include "geometry.h"
 
 class Princ : public QMainWindow, private Ui::Princ
 {

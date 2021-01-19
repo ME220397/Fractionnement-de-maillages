@@ -14,6 +14,17 @@ Princ::Princ(QWidget *parent) : QMainWindow(parent)
     connect(this, SIGNAL(seeds_clicked(MyMesh*, int)), glarea, SLOT(getSeeds(MyMesh*, int)));
 }
 
+void test_get_planes(Mesh mesh)
+{
+    QVector<Plane> planes;
+    planes = Geometry::get_planes(mesh);
+    for(Plane p:planes){
+        qDebug() << "pos :" << Geometry::to_Qvector3D(p.get_position());
+        qDebug() << "vec1 :" << Geometry::to_Qvector3D(p.get_u()) << "vec2 :" << Geometry::to_Qvector3D(p.get_v());
+    }
+}
+
+
 void Princ::on_pushButton_clicked()
 {
     // fenêtre de sélection des fichiers
@@ -23,6 +34,8 @@ void Princ::on_pushButton_clicked()
     if(OpenMesh::IO::read_mesh(mesh, fileName.toUtf8().constData())){
         mesh_loaded(mesh);
     }
+    Mesh _mesh(mesh,QVector3D(0,0,0));
+    test_get_planes(_mesh);
 }
 
 

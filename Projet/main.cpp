@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     Princ w;
     w.show();
-    test_line_intersection();
+    //test_line_intersection();
     //test_mesh_creation();
     //test_plane_intersection();
     //test_get_mediator_plan();
