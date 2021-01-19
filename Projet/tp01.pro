@@ -39,16 +39,23 @@ SOURCES += main.cpp\
         physics.cpp \
         princ.cpp \
         glarea.cpp \
-        seedgenerator.cpp
+        seedgenerator.cpp \
+		geometry.cpp \
+		line.cpp \
+		plane.cpp 
 
 HEADERS  += princ.h \
 	boite.h \
 	glarea.h \
 	physics.h \
+	line.h \
+	plane.h \
 	seedgenerator.h \
 	MeshFormat.h \
 	glarea.h \
-	mesh.h
+	mesh.h \
+	geometry.h \
+	glarea.h
 
 FORMS    += princ.ui
 

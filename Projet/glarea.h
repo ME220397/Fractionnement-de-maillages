@@ -31,6 +31,7 @@ public:
 protected slots:
     void onTimeout();
     void onMeshLoaded(MyMesh mesh);
+    void on_vue_clicked();
     void getSeeds(MyMesh *mesh, int nbSeeds);
 
 protected:
@@ -67,6 +68,8 @@ private:
     void tearGLObjects();
 
     vector<Mesh> meshes;
+
+    bool face_mode;
 };
 
 #endif // GLAREA_H
