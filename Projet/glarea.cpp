@@ -6,6 +6,7 @@
 #include <QSurfaceFormat>
 #include <QMatrix4x4>
 
+
 static const char *vertexShaderSourceM =
     "attribute vec4 in_position;               \n"
     "attribute lowp vec4 col;               \n"
@@ -44,6 +45,8 @@ GLArea::GLArea(QWidget *parent) :
     connect (timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     timer->start();
     elapsedTimer.start();
+
+    physics = new Physics();
 }
 
 
@@ -75,6 +78,13 @@ void GLArea::initializeGL()
        qWarning() << program_mesh->log();
     }
 
+    program_sol = new QOpenGLShaderProgram(this);
+    program_sol->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/simple.vsh");
+    program_sol->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/simple.fsh");
+    if (! program_sol->link()) {  // édition de lien des shaders dans le shader program
+       qWarning("Failed to compile and link shader program:");
+       qWarning() << program_sol->log();
+    }
 }
 
 
@@ -83,6 +93,15 @@ void GLArea::makeGLObjects()
     for(Mesh p : meshes){
         p.load_data();
     }
+
+    // Création du sol
+    sol = new Boite(QVector3D(0.0f, -55.0f, 0.0f), 100.0, 0, 0);
+    sol->create_sol();
+    physics->createSol(sol);
+    vbo_sol.create();
+    vbo_sol.bind();
+    vbo_sol.allocate(sol->boite_data.constData(), sol->boite_data.count() * int(sizeof(GLfloat)));
+
 }
 
 
@@ -91,6 +110,8 @@ void GLArea::tearGLObjects()
     for(Mesh p : meshes){
         p.destroy_vbos();
     }
+
+    vbo_sol.destroy();
 }
 
 
@@ -118,6 +139,28 @@ void GLArea::paintGL()
     for(Mesh p : meshes){
         p.draw(projectionMatrix, viewMatrix, program_mesh);
     }
+
+    // Affichage du sol
+    vbo_sol.bind();
+    program_sol->bind(); // active le shader program du sol
+
+    QMatrix4x4 modelMatrixSol;
+//    modelMatrixSol.setToIdentity();
+    modelMatrixSol.translate(sol->position);
+    program_sol->setUniformValue("projectionMatrix", projectionMatrix);
+    program_sol->setUniformValue("viewMatrix", viewMatrix);
+    program_sol->setUniformValue("modelMatrix", modelMatrixSol);
+
+    program_sol->setAttributeBuffer("in_position", GL_FLOAT, 0, 3, 6 * sizeof(GLfloat));
+    program_sol->setAttributeBuffer("in_uv", GL_FLOAT, 3 * sizeof(GLfloat), 3, 6 * sizeof(GLfloat));
+    program_sol->enableAttributeArray("in_position");
+    program_sol->enableAttributeArray("in_uv");
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    program_sol->disableAttributeArray("in_position");
+    program_sol->disableAttributeArray("in_uv");
+    program_sol->release();
 }
 
 
@@ -238,8 +281,8 @@ void GLArea::onMeshLoaded(MyMesh mesh){
 void GLArea::getSeeds(MyMesh *mesh, int nbSeeds){
     qDebug() << __FUNCTION__;
     SeedGenerator seeds(mesh, nbSeeds);
-//    seeds.generateRand();
-    seeds.generateEquidistant();
+    seeds.generateRand();
+//    seeds.generateEquidistant();
     QVector<MyMesh::Point> points = seeds.get_points();
     Mesh seedsMesh(points, QVector3D(0.0f, 0.0f, 0.0f));
     seedsMesh.set_thickness_all_points(15.f);

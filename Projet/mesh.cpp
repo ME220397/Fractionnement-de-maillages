@@ -25,6 +25,8 @@ Mesh::Mesh(QVector<MyMesh::Point> points, QVector3D position){
     resetAllColorsAndThickness(&this->mesh);
 }
 
+Mesh::Mesh(){}
+
 // Setters
 
 void Mesh::set_faces_visible(bool s){
@@ -37,6 +39,24 @@ void Mesh::set_edges_visible(bool s){
 
 void Mesh::set_vertices_visible(bool s){
     show_points = s;
+}
+
+void Mesh::set_positionX(float x){
+    position[0] = x;
+}
+
+void Mesh::set_positionY(float y){
+    position[1] = y;
+}
+
+void Mesh::set_positionZ(float z){
+    position[2] = z;
+}
+
+// Getters
+
+QVector3D Mesh::get_position(){
+    return position;
 }
 
 // Fonctions pour changer la couleur

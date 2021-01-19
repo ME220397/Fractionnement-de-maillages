@@ -8,6 +8,8 @@ QT       += core gui
 QT       += opengl
 
 CONFIG += c++14
+CONFIG += link_pkgconfig
+PKGCONFIG += bullet
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,13 +34,17 @@ macx: {
 }
 
 SOURCES += main.cpp\
+        boite.cpp \
         mesh.cpp \
+        physics.cpp \
         princ.cpp \
         glarea.cpp \
         seedgenerator.cpp
 
 HEADERS  += princ.h \
+	boite.h \
 	glarea.h \
+	physics.h \
 	seedgenerator.h \
 	MeshFormat.h \
 	glarea.h \
