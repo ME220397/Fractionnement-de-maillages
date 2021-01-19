@@ -518,3 +518,7 @@ void Mesh::resetAllColorsAndThickness(MyMesh* _mesh)
         _mesh->set_color(*curEdge, MyMesh::Color(0, 0, 0));
     }
 }
+
+MyMesh Mesh::get_mesh(){
+    return mesh;
+}

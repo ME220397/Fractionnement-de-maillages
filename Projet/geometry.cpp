@@ -302,7 +302,11 @@ MyMesh::Point Geometry::get_intersection_point(Line d1, Line d2)
 }
 
 
+/*QVector<Plane> Geometry::get_planes(MyMesh mesh){
+    for(MyMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); f_it++){
 
+    }
+}*/
 
 
 

@@ -38,7 +38,8 @@ SOURCES += main.cpp\
 	plane.cpp \
 	princ.cpp \
 	glarea.cpp \
-	seedgenerator.cpp
+	seedgenerator.cpp \
+	voronoi.cpp
 
 HEADERS  += princ.h \
 	glarea.h \
@@ -49,7 +50,8 @@ HEADERS  += princ.h \
 	glarea.h \
 	mesh.h \
 	geometry.h \
-	glarea.h
+	glarea.h \
+	voronoi.h
 
 FORMS    += princ.ui
 

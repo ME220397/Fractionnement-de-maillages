@@ -50,6 +50,8 @@ public:
     void load_data();
     void draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShaderProgram * program);
 
+    MyMesh get_mesh();
+
 private:
     MyMesh mesh;
     QVector3D position;
