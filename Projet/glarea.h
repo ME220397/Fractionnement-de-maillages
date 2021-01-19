@@ -66,6 +66,7 @@ private:
     QOpenGLTexture *texture[1];
 
     QVector<Mesh> voronoiMeshes;
+    void createVoronoi(Mesh mesh);
 
 
     void makeGLObjects();
