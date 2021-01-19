@@ -10,6 +10,7 @@ Mesh::Mesh(MyMesh mesh, QVector3D position)
     this->show_points = true;
     this->thick_edge = 1.0f;
     this->thick_point = 1.0f;
+    compute_min_max_box();
     resetAllColorsAndThickness(&this->mesh);
 }
 
@@ -23,6 +24,7 @@ Mesh::Mesh(QVector<MyMesh::Point> points, QVector3D position){
     this->show_points = true;
     this->thick_edge = 1.0f;
     this->thick_point = 1.0f;
+    compute_min_max_box();
     resetAllColorsAndThickness(&this->mesh);
 }
 
@@ -35,6 +37,7 @@ Mesh::Mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces, QVector3D
     this->show_edges = true;
     this->thick_point = 1.0f;
     this->thick_edge = 1.0f;
+    compute_min_max_box();
     resetAllColorsAndThickness(&this->mesh);
 }
 Mesh::Mesh(){}
@@ -397,6 +400,32 @@ void Mesh::draw(QMatrix4x4 projectionMatrix, QMatrix4x4 viewMatrix, QOpenGLShade
     }
 }
 
+void Mesh::compute_min_max_box(){
+    MyMesh *_mesh = &mesh;
+    if((int)_mesh->n_vertices() > 0){
+        VertexHandle first = _mesh->vertex_handle(0);
+        min = _mesh->point(first); max = _mesh->point(first);
+
+        for(MyMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); v_it++ ){
+            MyMesh::Point current = _mesh->point(*v_it);
+
+            if(min[0] > current[0])
+                min[0] = current[0];
+            if(min[1] > current[1])
+                min[1] = current[1];
+            if(min[2] > current[2])
+                min[2] = current[2];
+
+            if(max[0] < current[0])
+                max[0] = current[0];
+            if(max[1] < current[1])
+                max[1] = current[1];
+            if(max[2] < current[2])
+                max[2] = current[2];
+        }
+    }
+}
+
 MyMesh Mesh::compute_bounding_box(){
     MyMesh *_mesh = &mesh;
     MyMesh::Point min, max;
@@ -562,6 +591,23 @@ void Mesh::build_mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces
        int id0, id1, id2;
        id0 = face.at(0); id1 = face.at(1); id2 = face.at(2);
 
+       VertexHandle v0, v1 ,v2;
+       v0 = mesh.vertex_handle(id0);
+       v1 = mesh.vertex_handle(id1);
+       v2 = mesh.vertex_handle(id2);
+
+       MyMesh::Point A, B, C;
+       A = mesh.point(v0);
+       B = mesh.point(v1);
+       C = mesh.point(v2);
+
+       int det = Geometry::determinant(A, B, C);
+       if(det > 0){
+           mesh.add_face(v0, v1, v2);
+       }
+       else if(det < 0){
+           mesh.add_face(v0, v2, v1);
+       }
        // Trouvé un moyen de creer le Mesh
     }   
 }

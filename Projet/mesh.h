@@ -31,6 +31,8 @@ public:
 
     // Getters
     QVector3D get_position();
+    MyMesh::Point get_min_bbox();
+    MyMesh::Point get_max_bbox();
 
     // Changer la couleur
     void color_point_by_id(int id, int r, int g, int b);
@@ -63,6 +65,7 @@ public:
 private:
 
     void build_mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces);
+    void compute_min_max_box();
 
     MyMesh mesh;
     QVector3D position;
@@ -80,6 +83,9 @@ private:
 
     float thick_edge;
     float thick_point;
+
+    MyMesh::Point min;
+    MyMesh::Point max;
 };
 
 #endif // MESH_H

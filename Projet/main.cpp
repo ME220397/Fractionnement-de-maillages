@@ -38,6 +38,7 @@ void test_line_intersection(){
     intersected = Geometry::intersected(l9, l10);
     assert(intersected);
 }
+
 void test_mesh_creation(){
    QVector<MyMesh::Point> points;
    QVector<QVector<int>> faces;
@@ -57,44 +58,73 @@ void test_mesh_creation(){
    face0.append(0);
    face0.append(1);
    face0.append(2);
-   face0.append(3);
    faces.append(face0);
 
    QVector<int> face1;
-   face1.append(1);
    face1.append(2);
-   face1.append(4);
-   face1.append(5);
+   face1.append(3);
+   face1.append(0);
    faces.append(face1);
 
    QVector<int> face2;
+   face2.append(1);
    face2.append(5);
    face2.append(4);
-   face2.append(7);
-   face2.append(6);
    faces.append(face2);
 
    QVector<int> face3;
-   face3.append(6);
-   face3.append(7);
-   face3.append(3);
-   face3.append(0);
+   face3.append(4);
+   face3.append(2);
+   face3.append(1);
    faces.append(face3);
 
    QVector<int> face4;
-   face4.append(2);
-   face4.append(3);
-   face4.append(7);
    face4.append(4);
+   face4.append(5);
+   face4.append(6);
    faces.append(face4);
 
    QVector<int> face5;
-   face5.append(1);
-   face5.append(5);
    face5.append(6);
-   face5.append(0);
+   face5.append(7);
+   face5.append(4);
    faces.append(face5);
 
+   QVector<int> face6;
+   face6.append(7);
+   face6.append(6);
+   face6.append(0);
+   faces.append(face6);
+
+   QVector<int> face7;
+   face7.append(0);
+   face7.append(3);
+   face7.append(7);
+   faces.append(face7);
+
+   QVector<int> face8;
+   face8.append(2);
+   face8.append(4);
+   face8.append(7);
+   faces.append(face8);
+
+   QVector<int> face9;
+   face9.append(7);
+   face9.append(3);
+   face9.append(2);
+   faces.append(face9);
+
+   QVector<int> face10;
+   face10.append(1);
+   face10.append(5);
+   face10.append(6);
+   faces.append(face10);
+
+   QVector<int> face11;
+   face11.append(6);
+   face11.append(0);
+   face11.append(1);
+   faces.append(face11);
    Mesh mesh(points, faces, QVector3D(0,0,0));
 }
 
