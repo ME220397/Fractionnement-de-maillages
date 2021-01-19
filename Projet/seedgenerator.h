@@ -22,7 +22,7 @@ public:
     MyMesh::Point get_minCoords();
     void generateRand();
     void generateEquidistant(); //Il faut que le nombre de points soit un multiple de 4.
-    void getBary();
+    QVector<MyMesh::Point> getBary();
 
     QVector<MyMesh::Point> generatedPoints;
 

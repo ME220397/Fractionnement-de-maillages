@@ -65,6 +65,8 @@ private:
     QOpenGLBuffer vbo_particule;
     QOpenGLTexture *texture[1];
 
+    QVector<Mesh> voronoiMeshes;
+
 
     void makeGLObjects();
     void tearGLObjects();
