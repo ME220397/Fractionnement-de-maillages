@@ -302,11 +302,29 @@ MyMesh::Point Geometry::get_intersection_point(Line d1, Line d2)
 }
 
 
-/*QVector<Plane> Geometry::get_planes(MyMesh mesh){
-    for(MyMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); f_it++){
+QVector<Plane> Geometry::get_planes(Mesh mesh){
+    MyMesh mymesh = mesh.get_mesh();
+    MyMesh *_mesh = &mymesh;
+    MyMesh::Point barycentre(0,0,0);
+    MyMesh::Point A;
+    MyMesh::Point B;
+    QVector<Plane> planes;
+    Plane P(barycentre,barycentre,barycentre);
 
+    for(MyMesh::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); f_it++){
+        for(MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it){
+            barycentre += _mesh->point(*fv_it);
+        }
+        barycentre /= 3;
+        MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*f_it);
+        A = _mesh->point(*fv_it);
+        fv_it++;
+        B = _mesh->point(*fv_it);
+        P = Plane(barycentre, get_vect(barycentre, A), get_vect(barycentre, B));
+        planes.append(P);
     }
-}*/
+    return planes;
+}
 
 
 

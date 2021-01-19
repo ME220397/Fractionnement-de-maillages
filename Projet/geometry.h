@@ -7,6 +7,7 @@
 #include "line.h"
 #include "QVector4D"
 #include "QMatrix4x4"
+#include "mesh.h"
 class Geometry
 {
 public:
@@ -16,7 +17,7 @@ public:
     Plane get_mediator_plan(MyMesh::Point A, MyMesh::Point B); //Recupere le plan mediateur du vecteur AB
     Line get_intersection_line(Plane p, Plane q); //Recupere la droite d'intersection de deux plans
     MyMesh::Point get_intersection_point(Line d1, Line d2); //Recupere le point d'intersection de deux droites
-    QVector<Plane> get_planes(MyMesh mesh); //Recupere les plans des faces du mesh
+    QVector<Plane> get_planes(Mesh mesh); //Recupere les plans des faces du mesh
 
     // Geometry on plane
     static bool intersected(Plane p1, Plane p2);

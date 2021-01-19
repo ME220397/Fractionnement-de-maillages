@@ -3,6 +3,7 @@
 #include <iostream>
 #include "MeshFormat.h"
 #include <seedgenerator.h>
+#include "mesh.h"
 
 class Voronoi
 {
