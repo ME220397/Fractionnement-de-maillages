@@ -35,6 +35,22 @@ void test_get_mediator_planes(Mesh mesh)
     }
 }
 
+void test_get_intersection_Line_mesh_plane(Mesh mesh){
+    QVector<Plane> planes;
+    QVector<Plane> q;
+    planes = Geometry::get_planes(mesh);
+    Plane p(MyMesh::Point(0,0,0), MyMesh::Point(1,0,0), MyMesh::Point(0,1,0));
+    MyMesh::Point min = mesh.get_min_bbox();
+    MyMesh::Point max = mesh.get_max_bbox();
+    QVector<Line> lines;
+
+    lines = Voronoi::get_intersection_Line_mesh_plane(p, planes, min, max);
+    for(Line l:lines){
+        qDebug() << Geometry::to_Qvector3D(l.get_position());
+        qDebug() << Geometry::to_Qvector3D(l.get_u());
+    }
+}
+
 void Princ::on_pushButton_clicked()
 {
     // fenêtre de sélection des fichiers
@@ -47,6 +63,7 @@ void Princ::on_pushButton_clicked()
     Mesh _mesh(mesh,QVector3D(0,0,0));
     //test_get_planes(_mesh);
     test_get_mediator_planes(_mesh);
+    //test_get_intersection_Line_mesh_plane(_mesh);
 }
 
 

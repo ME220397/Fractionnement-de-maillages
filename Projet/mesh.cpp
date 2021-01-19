@@ -615,3 +615,11 @@ void Mesh::build_mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces
 MyMesh Mesh::get_mesh(){
     return mesh;
 }
+
+MyMesh::Point Mesh::get_min_bbox(){
+    return min;
+}
+
+MyMesh::Point Mesh::get_max_bbox(){
+    return max;
+}
