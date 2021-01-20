@@ -45,7 +45,7 @@ void test_get_intersection_Line_mesh_plane(Mesh mesh){
     planes = Geometry::get_planes(mesh);
     //Plane p(MyMesh::Point(0,0,0), MyMesh::Point(1,0,0), MyMesh::Point(0,1,0));
     for(MyMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); v_it++)
-        med_planes.append(Geometry::get_mediator_plan(MyMesh::Point(0,0,0), _mesh->point(*v_it)));
+        med_planes.append(Geometry::get_mediator_plane(MyMesh::Point(0,0,0), _mesh->point(*v_it)));
     MyMesh::Point min = mesh.get_min_bbox();
     MyMesh::Point max = mesh.get_max_bbox();
     QVector<Line> lines;

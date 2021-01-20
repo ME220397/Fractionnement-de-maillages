@@ -12,7 +12,7 @@ QVector<Plane> Voronoi::get_mediator_planes(MyMesh::Point p, Mesh mesh)
     MyMesh *_mesh = &mymesh;
     QVector<Plane> planes;
     for(MyMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); v_it++){
-        planes.append(Geometry::get_mediator_plan(p, _mesh->point(*v_it))); //On ajoute les plans mediateurs entre les sommets parcourus et le point p
+        planes.append(Geometry::get_mediator_plane(p, _mesh->point(*v_it))); //On ajoute les plans mediateurs entre les sommets parcourus et le point p
     }
     return planes;
 }
@@ -72,7 +72,7 @@ QVector<Mesh> Voronoi::compute_voronoi(Mesh mesh, QVector<MyMesh::Point> points)
     for(MyMesh::Point p:points){
         //qDebug() << "points :" << Geometry::to_Qvector3D(p);
         for(MyMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); v_it++){
-            med_planes.append(Geometry::get_mediator_plan(p, _mesh->point(*v_it)));
+            med_planes.append(Geometry::get_mediator_plane(p, _mesh->point(*v_it)));
             //qDebug() << Geometry::to_Qvector3D(med_planes[cpt++].get_position());
         }
     }
