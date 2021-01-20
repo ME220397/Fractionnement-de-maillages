@@ -341,7 +341,7 @@ MyMesh::Point Geometry::get_intersection_point(Line d1, Line d2)
 }
 
 
-QVector<Plane> Geometry::get_planes(Mesh mesh){ //Recupere les plans correspondants aux faces des mesh
+QVector<QVector<Plane>> Geometry::get_planes(Mesh mesh){ //Recupere les plans correspondants aux faces des mesh
 
     MyMesh mymesh = mesh.get_mesh();
 
@@ -354,47 +354,48 @@ QVector<Plane> Geometry::get_planes(Mesh mesh){ //Recupere les plans corresponda
     for(MyMesh::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); f_it++){
         _mesh->property(prop_plane, *f_it) = true;
     }
-    // Pour chaque Edge on calcule l'angle dihedre
-    for (MyMesh::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); e_it++) {
-        float angle = _mesh->calc_dihedral_angle(*e_it);
-        //qDebug() << "angle : " << angle;
-        if(angle == 0){
-            // Les deux faces de l'edge appartiennent au même plan
-            // On en mets une a false
-            HalfedgeHandle eh = _mesh->halfedge_handle(*e_it, 0);
-            FaceHandle fh = _mesh->face_handle(eh);
-            _mesh->property(prop_plane, fh) = false;
-        }
-    }
 
-    //MyMesh::Point barycentre(0,0,0); //Initialisation
-    MyMesh::Point A(0,0,0);
-    MyMesh::Point B;
-    MyMesh::Point C;
-    QVector<Plane> planes;
-    Plane P(A,A,A);
-
-    //Calcul du barycentre
-    for(MyMesh::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); f_it++){
-        if(_mesh->property(prop_plane, *f_it)){
-            /*for(MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it){
-                barycentre += _mesh->point(*fv_it);
+    QVector<QVector<Plane>> v_planes;
+    for(MyMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); v_it++){
+        //On itere sur les edges pour changer la propriété des faces
+        for(MyMesh::VertexEdgeIter ve_it = _mesh->ve_iter(*v_it); ve_it.is_valid(); ve_it++){
+            float angle = _mesh->calc_dihedral_angle(*ve_it);
+            //qDebug() << "angle : " << angle;
+            if(angle == 0){
+                // Les deux faces de l'edge appartiennent au même plan
+                // On en mets une a false
+                HalfedgeHandle eh = _mesh->halfedge_handle(*ve_it, 0);
+                FaceHandle fh = _mesh->face_handle(eh);
+                _mesh->property(prop_plane, fh) = false;
             }
-            barycentre /= 3;*/
+        }
 
-            //Calcul de deux points du mesh
-            MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*f_it);
-            A = _mesh->point(*fv_it);
-            fv_it++;
-            B = _mesh->point(*fv_it);
-            fv_it++;
-            C = _mesh->point(*fv_it);
-            P = Plane(A, get_vect(A, B), get_vect(A, C)); //Recuperation du  plan en prenant un point et deux vecteurs directeurs
-            planes.append(P);
-            //barycentre = MyMesh::Point(0,0,0); //Remise a 0
+        // Ton traitement sur les faces
+        MyMesh::Point A(0,0,0);
+        MyMesh::Point B;
+        MyMesh::Point C;
+        QVector<Plane> planes;
+        for(MyMesh::VertexFaceIter vf_it = _mesh->vf_iter(*v_it); vf_it.is_valid(); vf_it++){
+            if(_mesh->property(prop_plane, *vf_it)){
+                //Calcul de deux points du mesh
+                MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*vf_it);
+                A = _mesh->point(*fv_it);
+                fv_it++;
+                B = _mesh->point(*fv_it);
+                fv_it++;
+                C = _mesh->point(*fv_it);
+                Plane P(A, get_vect(A, B), get_vect(A, C)); //Recuperation du  plan en prenant un point et deux vecteurs directeurs
+                planes.append(P);
+            }
+        }
+        v_planes.append(planes);
+        planes.clear();
+        // On remet la propriété des faces a true pour les autres points
+        for(MyMesh::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); f_it++){
+            _mesh->property(prop_plane, *f_it) = true;
         }
     }
-    return planes;
+    return v_planes;
 }
 
 MyMesh::Point Geometry::compute_barycentre(QVector<MyMesh::Point> points){
