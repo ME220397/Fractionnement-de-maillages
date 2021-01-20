@@ -388,6 +388,7 @@ QVector<Plane> Geometry::get_planes(Mesh mesh){ //Recupere les plans corresponda
     // Pour chaque Edge on calcule l'angle dihedre
     for (MyMesh::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); e_it++) {
         float angle = _mesh->calc_dihedral_angle(*e_it);
+        //qDebug() << "angle : " << angle;
         if(angle == 0){
             // Les deux faces de l'edge appartiennent au même plan
             // On en mets une a false
