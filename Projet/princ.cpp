@@ -17,11 +17,13 @@ Princ::Princ(QWidget *parent) : QMainWindow(parent)
 
 void test_get_planes(Mesh mesh)
 {
-    QVector<Plane> planes;
+    QVector<QVector<Plane>> planes;
     planes = Geometry::get_planes(mesh);
-    for(Plane p:planes){
-        qDebug() << "pos :" << Geometry::to_Qvector3D(p.get_position());
-        qDebug() << "vec1 :" << Geometry::to_Qvector3D(p.get_u()) << "vec2 :" << Geometry::to_Qvector3D(p.get_v());
+    for(QVector<Plane> p:planes){
+        for(int i = 0; i<p.size() ; i++){
+            qDebug() << "pos :" << Geometry::to_Qvector3D(p[i].get_position());
+            qDebug() << "vec1 :" << Geometry::to_Qvector3D(p[i].get_u()) << "vec2 :" << Geometry::to_Qvector3D(p[i].get_v());
+        }
     }
 
     qDebug() << "number of planes : " << planes.size();
@@ -38,7 +40,7 @@ void test_get_mediator_planes(Mesh mesh)
 }
 
 void test_get_intersection_Line_mesh_plane(Mesh mesh){
-    QVector<Plane> planes;
+    QVector<QVector<Plane>> planes;
     QVector<Plane> med_planes;
     MyMesh mymesh = mesh.get_mesh();
     MyMesh *_mesh = &mymesh;
@@ -50,12 +52,8 @@ void test_get_intersection_Line_mesh_plane(Mesh mesh){
     MyMesh::Point max = mesh.get_max_bbox();
     QVector<Line> lines;
     for(Plane p:med_planes){
-        lines = Voronoi::get_intersection_Line_mesh_plane(p, planes, min, max);
-        for(Line l:lines){
-            //qDebug() << Geometry::to_Qvector3D(l.get_position()) << Geometry::to_Qvector3D(l.get_u());
-
-        }
-        //qDebug() << "OUI";
+        for(int i =0; i<planes.size(); i++)
+            lines = Voronoi::get_intersection_Line_mesh_plane(p, planes[i], min, max);
     }
 }
 void Princ::on_pushButton_clicked()
@@ -71,9 +69,9 @@ void Princ::on_pushButton_clicked()
 
     //test_get_planes(_mesh);
     //test_get_mediator_planes(_mesh);
-    test_get_intersection_Line_mesh_plane(_mesh);
-    /*SeedGenerator s(&mesh, 1);
-    Voronoi::compute_voronoi(_mesh, s.getBary());*/
+    //test_get_intersection_Line_mesh_plane(_mesh);
+    SeedGenerator s(&mesh, 1);
+    Voronoi::compute_voronoi(_mesh, s.getBary());
 }
 
 

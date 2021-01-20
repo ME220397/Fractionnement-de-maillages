@@ -29,7 +29,7 @@ public:
     static QVector3D get_normal(Plane p);
     static QVector4D get_equation(Plane p);
     static bool is_perpendicular(MyMesh::Point p, MyMesh::Point q); //Renvoie true si les deux vecteurs sont perpendiculaires
-    static QVector<Plane> get_planes(Mesh mesh); //Recupere les plans des faces du mesh
+    static QVector<QVector<Plane>> get_planes(Mesh mesh); //Recupere les plans des faces du mesh
     static MyMesh::Point get_vect(MyMesh::Point A, MyMesh::Point B); //Recupere le vecteur AB
 
 };
