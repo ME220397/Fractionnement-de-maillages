@@ -172,7 +172,7 @@ void test_get_mediator_plan()
     B[0] = 1; B[1] = -1; B[2] = 1;
 
     Plane P(A, B, g.get_vect(A,B));
-    P = g.get_mediator_plan(A,B);
+    P = g.get_mediator_plane(A,B);
     qDebug()<< P.get_position()[0] << P.get_position()[1] <<P.get_position()[2] << Qt::endl;
     //qDebug()<< g.get_vect(A,B)[0] << g.get_vect(A,B)[1] << g.get_vect(A,B)[2] << Qt::endl ;
     qDebug()<< P.get_u()[0] << P.get_u()[1] <<P.get_u()[2] << Qt::endl;
@@ -230,8 +230,8 @@ int main(int argc, char *argv[])
     //test_line_intersection();
     //test_mesh_creation();
     //test_plane_intersection();
-    //test_get_mediator_plan();
-    test_get_intersection_line();
+    test_get_mediator_plan();
+    //test_get_intersection_line();
     //test_get_intersection_point();
     return a.exec();
 }

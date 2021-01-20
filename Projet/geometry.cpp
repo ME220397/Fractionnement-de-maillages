@@ -1,5 +1,7 @@
 #include "geometry.h"
 #include <QMatrix4x4>
+#include <iostream>
+#include <math.h>
 
 Geometry::Geometry()
 {
@@ -23,6 +25,29 @@ MyMesh::Point Geometry::get_vect(MyMesh::Point A, MyMesh::Point B)
     AB[1] = B[1]-A[1];
     AB[2] = B[2]-A[2];
     return AB;
+}
+
+Plane Geometry::get_mediator_plane(MyMesh::Point A, MyMesh::Point B){
+    // On récupère le milieu de AB
+    MyMesh::Point I = get_midpoint(A, B);
+
+    // On recupère le vecteur normal du plan
+    MyMesh::Point IB = get_vect(I, B);
+
+    // On recupere le vecteur normal a IB
+    MyMesh::Point u;
+    if(IB[0] == 0 && IB[1] == 0)
+        u = MyMesh::Point(IB[0], -IB[2], IB[1]);
+    else
+        u = MyMesh::Point(-IB[1], IB[0], IB[2]);
+    QVector3D u_q = Geometry::to_Qvector3D(u);
+    QVector3D v_q = Geometry::to_Qvector3D(IB);
+    // On recupere un deuxieme vecteur du plan grace au produit vectoriel
+    QVector3D vxu = QVector3D::crossProduct(v_q, u_q);
+
+    MyMesh::Point v = Geometry::to_point(vxu);
+
+    return Plane(I, u, v);
 }
 
 Plane Geometry::get_mediator_plan(MyMesh::Point A, MyMesh::Point B)
