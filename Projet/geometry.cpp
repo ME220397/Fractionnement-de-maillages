@@ -50,62 +50,6 @@ Plane Geometry::get_mediator_plane(MyMesh::Point A, MyMesh::Point B){
     return Plane(I, u, v);
 }
 
-Plane Geometry::get_mediator_plan(MyMesh::Point A, MyMesh::Point B)
-{
-    MyMesh::Point I; //Le milieu de AB
-    I = get_midpoint(A, B);
-
-    MyMesh::Point AB; //Le vecteur allant de A vers B
-    AB = get_vect(A, B);
-
-    QMatrix4x4 Rx; //Creation de la matrice de rotation autour de l'axe x de 90 degres
-    Rx.setToIdentity();
-    Rx.rotate(90, QVector3D(1, 0, 0));
-
-    MyMesh::Point u;
-    MyMesh::Point v;
-
-    QMatrix4x4 Ry; //Creation de la matrice de rotation autour de l'axe y de 90 degres
-    Ry.setToIdentity();
-    Ry.rotate(90, QVector3D(0, 1, 0));
-
-    QMatrix4x4 Rz; //Creation de la matrice de rotation autour de l'axe y de 90 degres
-    Rz.setToIdentity();
-    Rz.rotate(90, QVector3D(0, 0, 1));
-
-    if(AB[0] == 0 && AB[1] == 0)
-    {
-        u[0]=AB[2]; u[1] = 0; u[2] = 0;
-        v[0] = 0; v[1] = AB[2] ; v[2] = 0;
-    }
-    else if(AB[0] == 0 && AB[2] == 0)
-    {
-        u[0]=AB[1]; u[1] = 0; u[2] = 0;
-        v[0] = 0; v[1] = 0 ; v[2] = AB[1];
-    }
-    else if(AB[1] == 0 && AB[2] == 0)
-    {
-        u[0]=0; u[1] = 0; u[2] = AB[0];
-        v[0] = 0; v[1] = AB[0] ; v[2] = 0;
-    }
-    else
-    {
-        QVector3D U = Rx * to_Qvector3D(AB);
-        QVector3D V = Ry * to_Qvector3D(AB);
-        u = to_point(U);
-        v = to_point(V);
-        if(u==v){
-
-            V = Rz * to_Qvector3D(AB);
-            v = to_point(V);
-        }
-    }
-    Plane P(I, MyMesh::Point(u[0], u[1], u[2]), MyMesh::Point(v[0], v[1], v[2]));
-    return P;
-}
-
-
-
 bool Geometry::intersected(Plane p1, Plane p2){
     // On veut savoir les deux plans donnés en arguments s'intersectent
     // Un plan Plane est données par une position et deux vecteurs directeurs.

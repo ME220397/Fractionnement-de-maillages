@@ -14,7 +14,6 @@ public:
     Geometry();
     static MyMesh::Point get_midpoint(MyMesh::Point A, MyMesh::Point B); //Recupere le milieur de AB
     static Plane get_mediator_plane(MyMesh::Point A, MyMesh::Point B);
-    static Plane get_mediator_plan(MyMesh::Point A, MyMesh::Point B); //Recupere le plan mediateur du vecteur AB
     static Line get_intersection_line(Plane p, Plane q); //Recupere la droite d'intersection de deux plans
     static MyMesh::Point get_intersection_point(Line d1, Line d2); //Recupere le point d'intersection de deux droites
 
