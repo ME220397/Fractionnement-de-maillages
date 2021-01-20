@@ -84,6 +84,30 @@ QVector<Mesh> Voronoi::extract_meshes(QVector<QVector<MyMesh::Point> > v_points,
         MyMesh::Point B = Geometry::compute_barycentre(mesh_points);
         meshes.append(Mesh(mesh_points, faces, Geometry::to_Qvector3D(B)));
     }
+
+    // On extraite le dernier mesh
+    QVector<MyMesh::Point> pts;
+    QVector<QVector<int>> faces;
+    for(int i = 0; i<v_points.size(); i++){
+        QVector<int> face;
+        MyMesh::Point a, b, c;
+        a = v_points[i].at(0);
+        b = v_points[i].at(1);
+        c = v_points[i].at(2);
+
+        if(!pts.contains(a))
+            pts.append(a);
+        if(!pts.contains(b))
+            pts.append(b);
+        if(!pts.contains(c))
+            pts.append(c);
+
+        face.append(pts.indexOf(a));
+        face.append(pts.indexOf(b));
+        face.append(pts.indexOf(c));
+
+        faces.append(face);
+    }
     return meshes;
 }
 
