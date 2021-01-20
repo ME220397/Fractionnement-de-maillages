@@ -17,12 +17,13 @@ QVector<Plane> Voronoi::get_mediator_planes(MyMesh::Point p, Mesh mesh)
     return planes;
 }
 
-QVector<Line> Voronoi::get_intersection_Line_mesh_plane(Plane p, QVector<Plane> planes_mesh, MyMesh::Point min, MyMesh::Point max)//renvoie les droites d intersection entre un plan p et les plan du mesh
+QVector<Line> Voronoi::get_intersection_Line_mesh_plane(Plane p, QVector<Plane> planes_mesh)//renvoie les droites d intersection entre un plan p et les plan du mesh
 { // p sera un plan mediateur
     /*qDebug() << min[0] << min[1] << min[2];
     qDebug() << max[0] << max[1] << max[2];*/
     QVector<Line> inter_line;
     Line line(MyMesh::Point(0,0,0), MyMesh::Point(0,0,0));
+
     //qDebug() <<"p " << Geometry::to_Qvector3D(p.get_position())<< Geometry::to_Qvector3D(p.get_u()) <<Geometry::to_Qvector3D(p.get_v());
     for(Plane q:planes_mesh){
         //qDebug() <<"q " << Geometry::to_Qvector3D(q.get_position()) << Geometry::to_Qvector3D(q.get_u()) <<Geometry::to_Qvector3D(q.get_v());
@@ -52,11 +53,12 @@ QVector<Line> Voronoi::get_intersection_Line_mesh_plane(Plane p, QVector<Plane> 
 QVector<MyMesh::Point> Voronoi::get_points(QVector<Line> lines){
     QVector<MyMesh::Point> points;
     points.append(Geometry::get_intersection_point(lines[0], lines[1]));
-    //qDebug() << Geometry::to_Qvector3D(lines[0].get_position()) << Geometry::to_Qvector3D(lines[0].get_u())<<Geometry::to_Qvector3D(lines[1].get_position()) << Geometry::to_Qvector3D(lines[1].get_u());
+
     points.append(Geometry::get_intersection_point(lines[1], lines[2]));
 
-    points.append(Geometry::get_intersection_point(lines[2], lines[0]));
-
+    points.append(Geometry::get_intersection_point(lines[0], lines[2]));
+    //qDebug() << Geometry::to_Qvector3D(lines[0].get_position()) << Geometry::to_Qvector3D(lines[0].get_u());
+    //qDebug()<<Geometry::to_Qvector3D(lines[2].get_position()) << Geometry::to_Qvector3D(lines[2].get_u());
     return points;
 }
 
@@ -133,7 +135,7 @@ QVector<Mesh> Voronoi::compute_voronoi(Mesh mesh, QVector<MyMesh::Point> points)
     QVector<QVector<Line>> lines;
     QVector<Line> line;
     for(int i=0; i< med_planes.size(); i++){
-        line = get_intersection_Line_mesh_plane(med_planes[i], planes[i], mesh.get_min_bbox(), mesh.get_max_bbox());
+        line = get_intersection_Line_mesh_plane(med_planes[i], planes[i]);
 
         //qDebug() << line.size();
         /*for(Line l:line)
@@ -149,16 +151,15 @@ QVector<Mesh> Voronoi::compute_voronoi(Mesh mesh, QVector<MyMesh::Point> points)
     QVector<QVector<MyMesh::Point>> inter_points;
     for(QVector<Line> l:lines){
         inter_points.append(get_points(l));
-        for(QVector<MyMesh::Point> pts:inter_points){
-            for(MyMesh::Point pt:pts)
-            {
-                qDebug() << Geometry::to_Qvector3D(pt);
-            }
-            qDebug() << "Fin line";
-        }
-        qDebug() << "Boucle line";
-
     }
+    for(QVector<MyMesh::Point> pts:inter_points){
+        for(MyMesh::Point pt:pts)
+        {
+            qDebug() << Geometry::to_Qvector3D(pt);
+        }
+        qDebug() << "Fin line";
+    }
+    qDebug() << "Boucle line";
     //creation de nouveaux mesh dans un QVector<Mesh>
 
 }

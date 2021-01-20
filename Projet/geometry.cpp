@@ -156,7 +156,7 @@ QVector4D Geometry::get_equation(Plane p)
 {
     MyMesh::Point I; //Recuperation d'un point de p
     I = p.get_position();
-
+    //qDebug() << "I " << Geometry::to_Qvector3D(I);
     QVector3D n; //Recuperation de la normale
     n = get_normal(p);
 
@@ -185,6 +185,7 @@ Line Geometry::get_intersection_line(Plane p, Plane q)
     b = eq_p[1];
     c = eq_p[2];
     d = eq_p[3];
+    //qDebug() << a << b<< c<<d;
     QVector3D N = get_normal(p); //Normale de p
     MyMesh::Point n;
     n = to_point(N);
@@ -192,9 +193,11 @@ Line Geometry::get_intersection_line(Plane p, Plane q)
     pos_q2 = q.get_position();
     MyMesh::Point pos_q; //Un deuxieme point de q
     pos_q = q.get_position();
+    qDebug() << Geometry::to_Qvector3D(pos_q);
 
     MyMesh::Point u_q; //Premier vecteur directeur de q
     u_q = q.get_u();
+    qDebug() << Geometry::to_Qvector3D(u_q);
 
     if(is_perpendicular(n, u_q)) //Si la droite def par pos_q et u_q est parallele a p
     {
@@ -204,9 +207,10 @@ Line Geometry::get_intersection_line(Plane p, Plane q)
     else
         pos_q2 += q.get_v();
 
-
+    qDebug() << Geometry::to_Qvector3D(u_q);
     float t; //coefficient de la droite : pos_q + t*u_q
     t = -(a*pos_q[0] + b*pos_q[1] + c*pos_q[2] + d)/(a*u_q[0] + b*u_q[1] + c*u_q[2]);
+    qDebug() << t;
     //Le denominateur n'est pas nul car c'est le produit scalaire
     //entre la normale du plan p et la droite choisis non-perpendiculaire du plan q
 
@@ -216,6 +220,7 @@ Line Geometry::get_intersection_line(Plane p, Plane q)
     X[2] = pos_q[2] + t*u_q[2];
 
     t = -(a*pos_q2[0] + b*pos_q2[1] + c*pos_q2[2] + d)/(a*u_q[0] + b*u_q[1] + c*u_q[2]);
+    qDebug() << t << "posq2 " << Geometry::to_Qvector3D(pos_q2);
 
     MyMesh::Point Y;
     Y[0] = pos_q2[0] + t*u_q[0];
@@ -317,7 +322,7 @@ MyMesh::Point Geometry::get_intersection_point(Line d1, Line d2)
             alpha = (x - a)/u;
         }
         else{
-            alpha = (a*j - x*j - b*j + y*i)/(v*i - u*j);
+            alpha = (a*j - x*j - b*i + y*i)/(v*i - u*j);
         }
     }
 
