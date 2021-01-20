@@ -31,6 +31,10 @@ private:
     btSequentialImpulseConstraintSolver* solver;
 
     btDiscreteDynamicsWorld* dynamicsWorld;
+
+    bool first = true;
+    bool deleted = false;
+    btRigidBody* firstBody;
 };
 
 #endif // PHYSICS_H

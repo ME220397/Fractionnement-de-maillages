@@ -61,7 +61,6 @@ void Physics::createConvex(Mesh *mesh){
 
         collisionShapes.push_back(convexShape);
         mesh->set_numObj(nb_dynamic_obj);
-        nb_dynamic_obj++;
 
         btTransform convexTransform;
         convexTransform.setIdentity();
@@ -76,11 +75,21 @@ void Physics::createConvex(Mesh *mesh){
 
         btDefaultMotionState* myMotionState = new btDefaultMotionState(convexTransform);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, convexShape, localInertia);
-        btRigidBody* body = new btRigidBody(rbInfo);
-        body->setLinearVelocity(btVector3(-30, 0, -30));
+        if(first){
+            firstBody = new btRigidBody(rbInfo);
+            firstBody->setLinearVelocity(btVector3(-30, 0, -30));
 
-        dynamicsWorld->addRigidBody(body);
-        nb_dynamic_obj++;
+            dynamicsWorld->addRigidBody(firstBody);
+            first = false;
+        } else {
+            if(!deleted){
+                dynamicsWorld->removeRigidBody(firstBody);
+                deleted = true;
+            }
+            btRigidBody *body = new btRigidBody(rbInfo);
+            dynamicsWorld->addRigidBody(body);
+            nb_dynamic_obj++;
+        }
     }
 }
 

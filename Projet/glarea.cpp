@@ -152,10 +152,6 @@ void GLArea::paintGL()
 
     for(Mesh p : printableMesh){
         p.draw(projectionMatrix, viewMatrix, program_mesh);
-        if(p.get_position()[1] <= -3.9 && !voroDone){
-            voroDone = true;
-            Voronoi voronoi(generatedSeeds, p.get_mesh());
-        }
     }
 
     // Affichage du sol
@@ -278,6 +274,10 @@ void GLArea::onTimeout()
     sol->anime(physics->get_world());
     for(Mesh &mesh : printableMesh){
         mesh.anime(physics->get_world());
+        if(mesh.get_position()[1] <= -3.9 && (voroDone == false)){
+            voroDone = true;
+            createVoronoi(mesh);
+        }
     }
 
     update();
@@ -335,4 +335,11 @@ void GLArea::getSeeds(MyMesh *mesh, int nbSeeds){
     seedsMesh.color_all_points(255, 0, 0);
     seedsMesh.load_data();
     meshes.push_back(seedsMesh);
+}
+
+void GLArea::createVoronoi(Mesh mesh){
+    voronoiMeshes = Voronoi::compute_voronoi(mesh, generatedSeeds);
+    for(Mesh &mesh : voronoiMeshes){
+        physics->createConvex(&mesh);
+    }
 }
