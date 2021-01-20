@@ -44,9 +44,9 @@ Plane Geometry::get_mediator_plan(MyMesh::Point A, MyMesh::Point B)
     Ry.setToIdentity();
     Ry.rotate(90, QVector3D(0, 1, 0));
 
-   /* QMatrix4x4 Rz; //Creation de la matrice de rotation autour de l'axe y de 90 degres
+    QMatrix4x4 Rz; //Creation de la matrice de rotation autour de l'axe y de 90 degres
     Rz.setToIdentity();
-    Rz.rotate(90, QVector3D(0, 0, 1));*/
+    Rz.rotate(90, QVector3D(0, 0, 1));
 
     if(AB[0] == 0 && AB[1] == 0)
     {
@@ -69,6 +69,11 @@ Plane Geometry::get_mediator_plan(MyMesh::Point A, MyMesh::Point B)
         QVector3D V = Ry * to_Qvector3D(AB);
         u = to_point(U);
         v = to_point(V);
+        if(u==v){
+
+            V = Rz * to_Qvector3D(AB);
+            v = to_point(V);
+        }
     }
     Plane P(I, MyMesh::Point(u[0], u[1], u[2]), MyMesh::Point(v[0], v[1], v[2]));
     return P;
@@ -350,7 +355,7 @@ MyMesh::Point Geometry::get_intersection_point(Line d1, Line d2)
     //qDebug() << alpha << beta << Qt::endl;
 
     //Recuperation du point d'intersection
-    MyMesh::Point pt_inter;
+    MyMesh::Point pt_inter(0,0,0);
     if(alpha == 0)
     {
         pt_inter[0] = x + beta*i;
@@ -392,28 +397,31 @@ QVector<Plane> Geometry::get_planes(Mesh mesh){ //Recupere les plans corresponda
         }
     }
 
-    MyMesh::Point barycentre(0,0,0); //Initialisation
-    MyMesh::Point A;
+    //MyMesh::Point barycentre(0,0,0); //Initialisation
+    MyMesh::Point A(0,0,0);
     MyMesh::Point B;
+    MyMesh::Point C;
     QVector<Plane> planes;
-    Plane P(barycentre,barycentre,barycentre);
+    Plane P(A,A,A);
 
     //Calcul du barycentre
     for(MyMesh::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); f_it++){
         if(_mesh->property(prop_plane, *f_it)){
-            for(MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it){
+            /*for(MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it){
                 barycentre += _mesh->point(*fv_it);
             }
-            barycentre /= 3;
+            barycentre /= 3;*/
 
             //Calcul de deux points du mesh
             MyMesh::FaceVertexIter fv_it = _mesh->fv_iter(*f_it);
             A = _mesh->point(*fv_it);
             fv_it++;
             B = _mesh->point(*fv_it);
-            P = Plane(barycentre, get_vect(barycentre, A), get_vect(barycentre, B)); //Recuperation du  plan en prenant un point et deux vecteurs directeurs
+            fv_it++;
+            C = _mesh->point(*fv_it);
+            P = Plane(A, get_vect(A, B), get_vect(A, C)); //Recuperation du  plan en prenant un point et deux vecteurs directeurs
             planes.append(P);
-            barycentre = MyMesh::Point(0,0,0); //Remise a 0
+            //barycentre = MyMesh::Point(0,0,0); //Remise a 0
         }
     }
     return planes;

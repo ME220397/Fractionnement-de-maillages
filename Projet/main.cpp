@@ -4,6 +4,7 @@
 #include "princ.h"
 #include "geometry.h"
 #include "plane.h"
+#include "voronoi.h"
 #include <QApplication>
 #include <QVector>
 
@@ -166,56 +167,60 @@ void test_get_mediator_plan()
     //test du plan médiateur
     Geometry g;
     MyMesh::Point A;
-    A[0] = 1; A[1] = 1; A[2] = 1;
+    A[0] = 0; A[1] = 0; A[2] = 0;
     MyMesh::Point B;
-    B[0] = 2; B[1] = 7; B[2] = 18;
+    B[0] = 1; B[1] = -1; B[2] = 1;
 
     Plane P(A, B, g.get_vect(A,B));
     P = g.get_mediator_plan(A,B);
     qDebug()<< P.get_position()[0] << P.get_position()[1] <<P.get_position()[2] << Qt::endl;
-    qDebug()<< g.get_vect(A,B)[0] << g.get_vect(A,B)[1] << g.get_vect(A,B)[2] << Qt::endl ;
+    //qDebug()<< g.get_vect(A,B)[0] << g.get_vect(A,B)[1] << g.get_vect(A,B)[2] << Qt::endl ;
     qDebug()<< P.get_u()[0] << P.get_u()[1] <<P.get_u()[2] << Qt::endl;
     qDebug()<< P.get_v()[0] << P.get_v()[1] <<P.get_v()[2] << Qt::endl;
-}
+    qDebug() << "OK";
+}//qDebug() << "TRES CHIANT";
 
 void test_get_intersection_line()
 {
     //test recuperation droite intersection
     Geometry g;
 
-    MyMesh::Point A(1,2,2);
-    MyMesh::Point u(1,1,0);
-    MyMesh::Point v(1,2,0);
+    MyMesh::Point A(-0.5,-0.5,0.5);
+    MyMesh::Point u(-1,-1,-1);
+    MyMesh::Point v(1,-1,1);
     Plane P(A,u,v);
 
-    MyMesh::Point B(-2,1,-2);
-    MyMesh::Point w(-1,-1,-1);
-    MyMesh::Point t(1,-1,1);
+    MyMesh::Point B(-1,-1,1);
+    MyMesh::Point w(0,2,-2);
+    MyMesh::Point t(0,0,-2);
     Plane Q(B,w,t);
 
-    if(g.intersected(P,Q) == true)
-        qDebug() << "Problème de fonction intersected" << Qt::endl;
+    if(g.intersected(P,Q) == false)
+        qDebug() << "Problème de fonction intersected";
 
     Line d(A, u);
     d = g.get_intersection_line(P,Q);
-    qDebug() << d.get_position()[0] << d.get_position()[1] << d.get_position()[2] << Qt::endl;
-    qDebug() << d.get_u()[0] << d.get_u()[1] << d.get_u()[2] << Qt::endl;
+    qDebug() << d.get_position()[0] << d.get_position()[1] << d.get_position()[2];
+    qDebug() << d.get_u()[0] << d.get_u()[1] << d.get_u()[2];
+    qDebug() << "OK";
 }
+
 
 void test_get_intersection_point(){
     Geometry g;
 
-    MyMesh::Point A(2,0,2);
-    MyMesh::Point u(1,0,1);
+    MyMesh::Point A(-1,0,-1);
+    MyMesh::Point u(0,-1,1);
     Line d1(A, u);
 
-    MyMesh::Point B(2,2,2);
-    MyMesh::Point v(1,1,1);
+    MyMesh::Point B(-1,1,1);
+    MyMesh::Point v(0,1,0);
     Line d2(B, v);
 
     MyMesh::Point pt_inter = g.get_intersection_point(d1, d2);
     qDebug() << pt_inter[0] << pt_inter[1] << pt_inter[2] << Qt::endl;
 }
+
 
 int main(int argc, char *argv[])
 {
@@ -226,7 +231,7 @@ int main(int argc, char *argv[])
     //test_mesh_creation();
     //test_plane_intersection();
     //test_get_mediator_plan();
-    //test_get_intersection_line();
+    test_get_intersection_line();
     //test_get_intersection_point();
     return a.exec();
 }
