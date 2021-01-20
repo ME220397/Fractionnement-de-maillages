@@ -36,6 +36,8 @@ public:
     QVector3D get_position();
     MyMesh::Point get_min_bbox();
     MyMesh::Point get_max_bbox();
+    QOpenGLBuffer get_vbo();
+
     int get_numObj();
     // Changer la couleur
     void color_point_by_id(int id, int r, int g, int b);

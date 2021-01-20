@@ -279,6 +279,9 @@ void GLArea::onTimeout()
             createVoronoi(mesh);
             btCollisionObject* obj = physics->get_world()->getCollisionObjectArray()[1];
             obj->setIgnoreCollisionCheck(physics->get_world()->getCollisionObjectArray()[2], true);
+            printableMesh.at(0).set_faces_visible(false);
+            printableMesh.at(0).set_vertices_visible(false);
+            printableMesh.at(0).set_edges_visible(false);
         }
     }
 
@@ -342,15 +345,17 @@ void GLArea::getSeeds(MyMesh *mesh, int nbSeeds){
 
 void GLArea::createVoronoi(Mesh mesh){
     QVector<QVector<MyMesh::Point>> v_points;
-    v_points.append({MyMesh::Point(0,-1,-1),MyMesh::Point(-1,0,-1), MyMesh::Point(-1,-1,0)});
+    v_points.append({MyMesh::Point(1,-.5,-.5),MyMesh::Point(1,-1,-1), MyMesh::Point(-1,-1,0), MyMesh::Point(-1,-1,0)});
     MyMesh m = mesh.get_mesh();
     MyMesh *_m = &m;
     QVector<Mesh> extracted_meshes = Voronoi::extract_meshes(v_points, _m);
     Mesh ext_m(extracted_meshes.at(0));
-    ext_m.set_positionX(0);
-    ext_m.set_positionY(10);
-    ext_m.set_positionZ(0);
     ext_m.load_data();
+
+    for(MyMesh::VertexIter v_it = ext_m.get_mesh().vertices_begin(); v_it != ext_m.get_mesh().vertices_end(); v_it++){
+        qDebug() << "Point création :" << ext_m.get_mesh().point(*v_it)[0] << ext_m.get_mesh().point(*v_it)[1] << ext_m.get_mesh().point(*v_it)[2];
+    }
+
     physics->createConvex(&ext_m);
     printableMesh.push_back(ext_m);
     /*voronoiMeshes = Voronoi::compute_voronoi(mesh, generatedSeeds);

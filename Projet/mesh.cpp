@@ -83,6 +83,10 @@ int Mesh::get_numObj(){
     return num_obj;
 }
 
+QOpenGLBuffer Mesh::get_vbo(){
+    return vbo_point;
+}
+
 // Fonctions pour changer la couleur
 
 void Mesh::color_point_by_id(int id, int r, int g, int b){
@@ -645,7 +649,8 @@ void Mesh::anime(btDiscreteDynamicsWorld *dynamicWorld){
     }
 
     position.setX(trans.getOrigin().getX());
-    position.setY(trans.getOrigin().getY());
+    if(this->num_obj <= 1) position.setY(trans.getOrigin().getY());
+    else  position.setY(trans.getOrigin().getY() + 1.5);
     position.setZ(trans.getOrigin().getZ());
 
 }
