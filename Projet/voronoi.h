@@ -15,6 +15,7 @@ public:
     static QVector<Line> get_intersection_Line_mesh_plane(Plane p, QVector<Plane>, MyMesh::Point min, MyMesh::Point max);
     static QVector<Mesh> compute_voronoi(Mesh mesh, QVector<MyMesh::Point> points);
     static QVector<MyMesh::Point> get_points(QVector<Line> lines);
+    static QVector<Mesh> extract_meshes(QVector<QVector<MyMesh::Point>> points, MyMesh*_mesh);
 
 private:
     QVector<MyMesh::Point> points;

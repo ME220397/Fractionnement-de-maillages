@@ -274,9 +274,11 @@ void GLArea::onTimeout()
     sol->anime(physics->get_world());
     for(Mesh &mesh : printableMesh){
         mesh.anime(physics->get_world());
-        if(mesh.get_position()[1] <= -3.9 && (voroDone == false)){
+        if(mesh.get_position()[1] <= -3.8 && voroDone == false){
             voroDone = true;
             createVoronoi(mesh);
+            btCollisionObject* obj = physics->get_world()->getCollisionObjectArray()[1];
+            obj->setIgnoreCollisionCheck(physics->get_world()->getCollisionObjectArray()[2], true);
         }
     }
 
@@ -304,23 +306,24 @@ void GLArea::onMeshLoaded(MyMesh mesh){
     bbox.set_faces_visible(false);
     physics->createConvex(&newMesh);
     printableMesh.push_back(newMesh);
-    meshes.push_back(newMesh);
     meshes.push_back(bbox);
 }
 
 void GLArea::on_vue_clicked(){
-    if(!meshes.empty()){
+    if(!printableMesh.empty()){
         if(face_mode){
-            meshes.at(0).color_all_edges(255, 140, 0);
-            meshes.at(0).load_data();
+            printableMesh.at(0).color_all_edges(255, 140, 0);
+            printableMesh.at(0).set_thickness_all_edges(5.F);
+            printableMesh.at(0).load_data();
             face_mode = false;
         }
         else{
-            meshes.at(0).color_all_edges(0, 0, 0);
-            meshes.at(0).load_data();
+            printableMesh.at(0).color_all_edges(0, 0, 0);
+            printableMesh.at(0).set_thickness_all_edges(1.F);
+            printableMesh.at(0).load_data();
             face_mode = true;
         }
-        meshes.at(0).set_faces_visible(face_mode);
+        printableMesh.at(0).set_faces_visible(face_mode);
     }
 }
 
@@ -338,8 +341,20 @@ void GLArea::getSeeds(MyMesh *mesh, int nbSeeds){
 }
 
 void GLArea::createVoronoi(Mesh mesh){
-    voronoiMeshes = Voronoi::compute_voronoi(mesh, generatedSeeds);
+    QVector<QVector<MyMesh::Point>> v_points;
+    v_points.append({MyMesh::Point(0,-1,-1),MyMesh::Point(-1,0,-1), MyMesh::Point(-1,-1,0)});
+    MyMesh m = mesh.get_mesh();
+    MyMesh *_m = &m;
+    QVector<Mesh> extracted_meshes = Voronoi::extract_meshes(v_points, _m);
+    Mesh ext_m(extracted_meshes.at(0));
+    ext_m.set_positionX(0);
+    ext_m.set_positionY(10);
+    ext_m.set_positionZ(0);
+    ext_m.load_data();
+    physics->createConvex(&ext_m);
+    printableMesh.push_back(ext_m);
+    /*voronoiMeshes = Voronoi::compute_voronoi(mesh, generatedSeeds);
     for(Mesh &mesh : voronoiMeshes){
         physics->createConvex(&mesh);
-    }
+    }*/
 }

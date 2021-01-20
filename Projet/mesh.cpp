@@ -614,10 +614,14 @@ void Mesh::build_mesh(QVector<MyMesh::Point> points, QVector<QVector<int>> faces
 
        int det = Geometry::determinant(A, B, C);
        if(det > 0){
-           mesh.add_face(v0, v1, v2);
+           FaceHandle f = mesh.add_face(v0, v1, v2);
+           if (!f.is_valid())
+               mesh.add_face(v0, v2, v1);
        }
        else if(det < 0){
-           mesh.add_face(v0, v2, v1);
+           FaceHandle f = mesh.add_face(v0, v2, v1);
+           if (!f.is_valid())
+               mesh.add_face(v0, v1, v2);
        }
        // Trouvé un moyen de creer le Mesh
     }

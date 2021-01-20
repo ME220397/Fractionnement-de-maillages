@@ -60,6 +60,33 @@ QVector<MyMesh::Point> Voronoi::get_points(QVector<Line> lines){
     return points;
 }
 
+QVector<Mesh> Voronoi::extract_meshes(QVector<QVector<MyMesh::Point> > v_points, MyMesh *_mesh){
+    QVector<Mesh> meshes;
+    for(int i = 0; i<v_points.size(); i++){
+        QVector<MyMesh::Point> mesh_points;
+        QVector<QVector<int>> faces;
+        MyMesh::Point p0 = _mesh->point(_mesh->vertex_handle(i));
+        MyMesh::Point a, b, c;
+        a = v_points[i].at(0);
+        b = v_points[i].at(1);
+        c = v_points[i].at(2);
+
+        mesh_points.append(p0);
+        mesh_points.append(a);
+        mesh_points.append(b);
+        mesh_points.append(c);
+
+        faces.append({1, 1, 0});
+        faces.append({2, 3, 0});
+        faces.append({1, 3, 0});
+        faces.append({1, 3, 2});
+
+        MyMesh::Point B = Geometry::compute_barycentre(mesh_points);
+        meshes.append(Mesh(mesh_points, faces, Geometry::to_Qvector3D(B)));
+    }
+    return meshes;
+}
+
 QVector<Mesh> Voronoi::compute_voronoi(Mesh mesh, QVector<MyMesh::Point> points)
 {
     //Recuperer les plans du mesh

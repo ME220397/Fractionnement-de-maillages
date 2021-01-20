@@ -17,6 +17,7 @@ public:
     static Line get_intersection_line(Plane p, Plane q); //Recupere la droite d'intersection de deux plans
     static MyMesh::Point get_intersection_point(Line d1, Line d2); //Recupere le point d'intersection de deux droites
 
+    static MyMesh::Point compute_barycentre(QVector<MyMesh::Point> points);
     static int determinant(MyMesh::Point A, MyMesh::Point B, MyMesh::Point P);
     static QMatrix4x4 change_of_base(MyMesh::Point P, MyMesh::Point u_prime, MyMesh::Point v_prime);
     // Geometry on Line

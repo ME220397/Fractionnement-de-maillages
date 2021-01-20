@@ -396,3 +396,14 @@ QVector<Plane> Geometry::get_planes(Mesh mesh){ //Recupere les plans corresponda
     }
     return planes;
 }
+
+MyMesh::Point Geometry::compute_barycentre(QVector<MyMesh::Point> points){
+    MyMesh::Point B(0.0f, 0.0f, 0.0f);
+
+    for(MyMesh::Point p : points){
+        B += p;
+    }
+
+    B /= float(points.size());
+    return B;
+}
