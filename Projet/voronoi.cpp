@@ -88,7 +88,7 @@ QVector<Mesh> Voronoi::extract_meshes(QVector<QVector<MyMesh::Point> > v_points,
     }
 
     // On extraite le dernier mesh
-    QVector<MyMesh::Point> pts;
+    /*QVector<MyMesh::Point> pts;
     QVector<QVector<int>> faces;
     for(int i = 0; i<v_points.size(); i++){
         QVector<int> face;
@@ -109,7 +109,7 @@ QVector<Mesh> Voronoi::extract_meshes(QVector<QVector<MyMesh::Point> > v_points,
         face.append(pts.indexOf(c));
 
         faces.append(face);
-    }
+    }*/
     return meshes;
 }
 

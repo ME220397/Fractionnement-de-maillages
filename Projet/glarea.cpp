@@ -150,10 +150,14 @@ void GLArea::paintGL()
     viewMatrix.rotate(zRot, 0, 0, 1);
 
 
-    for(Mesh p : printableMesh){
-        p.draw(projectionMatrix, viewMatrix, program_mesh);
+    for(int i = 0; i <printableMesh.size(); i++){
+        if(voroDone){
+            printableMesh[0].set_edges_visible(false);
+            printableMesh[0].set_faces_visible(false);
+            printableMesh[0].set_vertices_visible(false);
+        }
+        printableMesh[i].draw(projectionMatrix, viewMatrix, program_mesh);
     }
-
     // Affichage du sol
     vbo_sol.bind();
     program_sol->bind(); // active le shader program du sol
@@ -295,35 +299,31 @@ void GLArea::wheelEvent(QWheelEvent *_event){
 }
 
 void GLArea::onMeshLoaded(MyMesh mesh){
-    meshes.clear();
+    //meshes.clear();
     QVector3D pos(0, 0, 0);
     Mesh newMesh(mesh, pos);
     newMesh.load_data();
-    MyMesh box = newMesh.compute_bounding_box();
-    Mesh bbox(box, pos);
-    bbox.color_all_edges(255, 0, 0);
-    bbox.color_all_points(0, 0, 255);
-    bbox.set_thickness_all_edges(10.0f);
-    bbox.set_thickness_all_points(2.f);
-    bbox.load_data();
-    bbox.set_faces_visible(false);
     physics->createConvex(&newMesh);
     printableMesh.push_back(newMesh);
-    meshes.push_back(bbox);
 }
 
 void GLArea::on_vue_clicked(){
     if(!printableMesh.empty()){
         if(face_mode){
-            printableMesh.at(0).color_all_edges(255, 140, 0);
-            printableMesh.at(0).set_thickness_all_edges(5.F);
-            printableMesh.at(0).load_data();
+            for( int i = 0 ; i<printableMesh.size(); i++){
+                printableMesh.at(i).color_all_edges(255, 140, 0);
+                printableMesh.at(i).set_thickness_all_edges(5.F);
+                printableMesh.at(i).load_data();
+            }
             face_mode = false;
+
         }
         else{
-            printableMesh.at(0).color_all_edges(0, 0, 0);
-            printableMesh.at(0).set_thickness_all_edges(1.F);
-            printableMesh.at(0).load_data();
+            for( int i = 0 ; i<printableMesh.size(); i++){
+                printableMesh.at(i).color_all_edges(0, 0, 0);
+                printableMesh.at(i).set_thickness_all_edges(1.F);
+                printableMesh.at(i).load_data();
+            }
             face_mode = true;
         }
         printableMesh.at(0).set_faces_visible(face_mode);
@@ -351,11 +351,13 @@ void GLArea::createVoronoi(Mesh mesh){
     QVector<Mesh> extracted_meshes = Voronoi::extract_meshes(v_points, _m);
     Mesh ext_m(extracted_meshes.at(0));
     ext_m.load_data();
-
-    for(MyMesh::VertexIter v_it = ext_m.get_mesh().vertices_begin(); v_it != ext_m.get_mesh().vertices_end(); v_it++){
-        qDebug() << "Point création :" << ext_m.get_mesh().point(*v_it)[0] << ext_m.get_mesh().point(*v_it)[1] << ext_m.get_mesh().point(*v_it)[2];
-    }
-
+    Mesh bbox(ext_m.compute_bounding_box(), ext_m.get_position());
+    bbox.color_all_edges(255, 0, 0);
+    bbox.color_all_points(0, 0, 255);
+    bbox.set_thickness_all_edges(5.0f);
+    bbox.set_thickness_all_points(2.f);
+    bbox.load_data();
+    bbox.set_faces_visible(false);
     physics->createConvex(&ext_m);
     printableMesh.push_back(ext_m);
     /*voronoiMeshes = Voronoi::compute_voronoi(mesh, generatedSeeds);
