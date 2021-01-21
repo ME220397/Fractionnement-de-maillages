@@ -1,6 +1,8 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
+#include <QOpenGLBuffer>
+
 #include "btBulletDynamicsCommon.h"
 #include "boite.h"
 #include "mesh.h"

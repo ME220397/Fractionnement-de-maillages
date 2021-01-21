@@ -51,13 +51,16 @@ void Physics::createSol(Boite *sol){
 void Physics::createConvex(Mesh *mesh){
     {
         btConvexHullShape* convexShape = new btConvexHullShape();
-
         MyMesh _mymesh = mesh->get_mesh();
+        int i = 0;
         for(MyMesh::VertexIter v_it = _mymesh.vertices_begin(); v_it != _mymesh.vertices_end(); v_it++){
+            i++;
             VertexHandle current_vertex = *v_it;
             btVector3 point(btScalar(_mymesh.point(current_vertex)[0]), btScalar(_mymesh.point(current_vertex)[1]), btScalar(_mymesh.point(current_vertex)[2]));
-            convexShape->addPoint(point);
+            convexShape->addPoint(point, false);
+            convexShape->recalcLocalAabb();
         }
+        convexShape->setMargin(0);
 
         collisionShapes.push_back(convexShape);
         mesh->set_numObj(nb_dynamic_obj);
@@ -77,6 +80,8 @@ void Physics::createConvex(Mesh *mesh){
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, convexShape, localInertia);
 
         btRigidBody *body = new btRigidBody(rbInfo);
+//        body->setLinearVelocity(btVector3(500, 0, 0));
+
         dynamicsWorld->addRigidBody(body);
         nb_dynamic_obj++;
     }
