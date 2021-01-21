@@ -145,7 +145,7 @@ QVector<Mesh> Voronoi::compute_voronoi(Mesh mesh, QVector<MyMesh::Point> points)
     }
     for(MyMesh::VertexIter v_it=_mesh->vertices_begin(); v_it!=_mesh->vertices_end(); v_it++){
         VertexHandle vh = *v_it;
-        qDebug() << vh.idx();
+        //qDebug() << vh.idx();
     }
     //Intersection des droites
     QVector<QVector<MyMesh::Point>> inter_points;
@@ -155,11 +155,11 @@ QVector<Mesh> Voronoi::compute_voronoi(Mesh mesh, QVector<MyMesh::Point> points)
     for(QVector<MyMesh::Point> pts:inter_points){
         for(MyMesh::Point pt:pts)
         {
-            qDebug() << Geometry::to_Qvector3D(pt);
+            //qDebug() << Geometry::to_Qvector3D(pt);
         }
-        qDebug() << "Fin line";
+        //qDebug() << "Fin line";
     }
-    qDebug() << "Boucle line";
+    //qDebug() << "Boucle line";
     //creation de nouveaux mesh dans un QVector<Mesh>
 
 }

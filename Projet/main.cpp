@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
     //test_mesh_creation();
     //test_plane_intersection();
     //test_get_mediator_plan();
-    test_get_intersection_line();
+    //test_get_intersection_line();
     //test_get_intersection_point();
     return a.exec();
 }

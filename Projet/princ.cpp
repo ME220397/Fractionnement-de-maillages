@@ -68,8 +68,8 @@ void Princ::on_pushButton_clicked()
     //test_get_planes(_mesh);
     //test_get_mediator_planes(_mesh);
     //test_get_intersection_Line_mesh_plane(_mesh);
-    SeedGenerator s(&mesh, 1);
-    Voronoi::compute_voronoi(_mesh, s.getBary());
+    //SeedGenerator s(&mesh, 1);
+    //Voronoi::compute_voronoi(_mesh, s.getBary());
 }
 
 
