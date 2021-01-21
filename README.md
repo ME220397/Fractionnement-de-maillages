@@ -1,6 +1,10 @@
-# Fractionnement-de-maillages
-Collaborateurs : [FOUCOUR Thomas](https://github.com/SkreyZ),[KAMMERLOCHER Léo](https://github.com/Leokamm), MUNOZ Elias.
+## Installer bullet physics
 
-Le but de ce projet est de fractionner des maillages en utilisant le diagramme de voronoi 3D.
-
-En cours...
+### Pour linux
+```bash
+sudo apt-get install bullet-dev
+```
+### Pour Mac
+```bash
+brew install bullet
+```
